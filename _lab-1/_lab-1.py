@@ -25,6 +25,9 @@ class NameNode():
         # block size  = 128 Mb
         self._blocks = {}
 
+    def get_block_size(self):
+        return self._block_size
+
     def add_host(self, h):
         if h not in self._hosts.keys():
             self._hosts[h] = []
@@ -106,6 +109,10 @@ class NameNode():
 
 
 class DataNode():
+
+    def write_blocks(self, blocks):
+        self.blocks.append(blocks)
+        pass
     pass
 
 
@@ -117,11 +124,19 @@ class Client():
 
     def write_file(self, file, nnode, data_nodes):
         blocks, hosts = nnode.file_alloc(self.name, file['name'], file['size'])
-        blocks_to_write = self.write_blocks(blocks, file['data'])
+        blocks_to_write = self.write_blocks(blocks, file['data'],
+                                            nnode.get_block_size())
         for h, b in zip(hosts, blocks_to_write):
             data_nodes[h].write(b)
         nnode.complete(self.name, file['name'])
         return 'OK'
+
+    def write_blocks(self, blocks, data, size_of_block):
+        db = bytes(data)
+        blocks_with_data = []
+        for i in range(len(blocks)):
+            blocks_with_data.append(db[i*size_of_block, (i+1)*size_of_block])
+        return blocks_with_data
     pass
 
 
