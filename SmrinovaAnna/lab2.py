@@ -5,7 +5,7 @@ files = ("flavors_of_cacao.csv", "flavors_of_cacao_2.csv")
 def topCountry():
     d = {}
     for file in files:
-        with open('2022-BigData/_lab-2/' + file, 'r') as File:
+        with open('_lab-2/' + file, 'r') as File:
             reader = [row[5] for row in csv.reader(File)][1:]
         data = list(map(lambda x: (x), reader))
         data.sort()
