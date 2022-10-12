@@ -16,3 +16,5 @@ with open('./_lab-2/flavors_of_cacao_2.csv',)as file:
         data.append(i[5])
 res = Counter(data)
 print(dict(res)) 
+
+
