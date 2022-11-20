@@ -20,7 +20,7 @@ class Host:
         if not os.path.exists(self.host_dir):
             os.mkdir(self.host_dir)
 
-    def get_free_count(self):
+    def get_free_count(self) -> int:
         return len([value for value in self.blocks.values() if value])
 
     def write_block(self, block_name: BLOCK_NAME, data: str):
@@ -36,19 +36,19 @@ class Host:
         with open(self.host_dir + block_name, encoding="utf-8") as f:
             return f.read()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Host(title="{self.title}", is_alive={self.is_alive})'
 
 
 class Block:
-    def __init__(self, number: int, host: Host, file_name: str = ""):
+    def __init__(self, number: int, host: Host, file_name: FILE_NAME = ""):
         self.host = host
         self.number = number
         self.title = f"block_{self.number}"
         self.file_name = file_name
         self.replicas: list[Block] = []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Block(title="{self.title}", host={self.host}, file_name="{self.file_name}")'
 
 
@@ -96,7 +96,7 @@ class NameNode:
                     block.file_name = ""
         self._files = {}
 
-    def get_file_blocks(self, file_name) -> dict[Host, list[Block]]:
+    def get_file_blocks(self, file_name: FILE_NAME) -> dict[Host, list[Block]]:
         current_hosts = {}
         file_blocks = self._files[file_name]
         for block in file_blocks:
@@ -113,7 +113,7 @@ class NameNode:
             return "OK"
         return "Already in"
 
-    def replicate_block(self, block: Block, file_name: str, data: str):
+    def replicate_block(self, block: Block, file_name: FILE_NAME, data: str):
         possible_replica_hosts = self.get_hosts()
         possible_replica_hosts.remove(block.host)
 
@@ -135,14 +135,13 @@ class NameNode:
             block.replicas.append(replica_block)
             replica_host.write_block(replica_block.title, data)
 
-    def complete(self, file_name):
+    def complete(self, file_name: FILE_NAME):
         self._files[file_name] = []
         for block in self._blocks:
             if block.file_name == file_name:
                 self._files[file_name].append(block)
-        return True
 
-    def split_file(self, file_name, file_size) -> list[Block]:
+    def split_file(self, file_name: FILE_NAME, file_size: int) -> list[Block]:
         current_blocks = []
         blocks_count = file_size // self.block_size + (file_size % self.block_size != 0)
         for block in self.get_blocks_free()[:blocks_count]:
@@ -198,7 +197,7 @@ class Client:
         offset = 0
 
         for block in current_blocks:
-            block_data = data[offset : self._name_node.block_size + offset]
+            block_data = data[offset:self._name_node.block_size + offset]
             offset += self._name_node.block_size
             block.host.write_block(block.title, block_data)
             self._name_node.replicate_block(block, file_name, block_data)
