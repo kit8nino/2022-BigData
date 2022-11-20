@@ -1,10 +1,11 @@
 import datetime
 import json
+import asyncio
 import pathlib
+import time
 from typing import Optional
 
-import requests
-import tqdm
+import aiohttp
 from bs4 import BeautifulSoup, Tag
 
 
@@ -20,13 +21,15 @@ class Book:
         return f"Book({self.title=}, {self.publication_year=})"
 
 
-def parse_book(book_link: str):
+async def parse_book(session: aiohttp.ClientSession, book_link: str) -> Optional[Book]:
     title_field = "Название:"
     publication_year_field = "Год издания:"
 
-    html = requests.get(f"http:{book_link}").text
+    html = await ((await session.get(f"http:{book_link}")).text())
     soup = BeautifulSoup(html, "html.parser")
     content = soup.find("td", attrs={"style": "padding-left: 8px"})
+    if content is None:
+        return
     fields = content.find_all("td")
 
     title = None
@@ -44,54 +47,82 @@ def parse_book(book_link: str):
     return Book(title=title, publication_year=publication_year)
 
 
-def parse_page(data_link: str):
-    html = requests.get(f"http:{data_link}").text
+async def parse_page(
+    session: aiohttp.ClientSession, data_link: str
+) -> list[Optional[Book]]:
+    html = await (await session.get(f"http:{data_link}")).text()
     soup = BeautifulSoup(html, "html.parser")
     content = soup.find("div", class_="content")
     books: list[Tag] = list(
         filter(lambda link: "book" in link.get("href"), content.find_all("a"))
     )
+    result = [*await asyncio.gather(
+        *[parse_book(session, book.get("href")) for book in books]
+    )]
+    print(f"parsed page {data_link}. count - {len(result)}")
+    return result
 
-    return [parse_book(book.get("href")) for book in tqdm.tqdm(books)]
+
+def get_topic_links(main_div: Tag, topic: str) -> list[str]:
+    for div in main_div.find_all("div"):  # type: Tag
+        title = div.find("b").text
+        if title.lower().strip() != topic.lower().strip():
+            continue
+        return [link.get("href") for link in div.find_all("a")]
+    return []
 
 
-def parse_by_topic(
-    topic: str, save_path: str = "books_data.json", page_limit: Optional[int] = None
-):
+async def parse_subtopic(
+    session: aiohttp.ClientSession, topic_url: str
+) -> list[Optional[Book]]:
+    topic_html = await (await session.get(f"http:{topic_url}")).text()
+    soup = BeautifulSoup(topic_html, "html.parser")
+
+    pages = soup.find("div", class_="well")
+    if pages is not None:
+        data_links = [
+            link.get("href") for link in soup.find("div", class_="well").find_all("a")
+        ]
+        # RU: А	Б В Г Д Е Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Э Ю Я итд
+        pages_data = await asyncio.gather(
+            *[parse_page(session, data_link) for data_link in data_links]
+        )
+        pages_data = [data for sub_list in pages_data for data in sub_list]
+    else:
+        pages_data = await parse_page(session, topic_url)
+
+    print(f"parsed topic {topic_url}. count - {len(pages_data)}")
+    return pages_data
+
+
+async def parse_by_topic(topic: str, save_path: str = "books_data.json"):
+    start = time.time()
     url = "http://royallib.com"
-    genres_html = requests.get(f"{url}/genres.html").text
+    session = aiohttp.ClientSession()
+    genres_html = await (await session.get(f"{url}/genres.html")).text()
     soup = BeautifulSoup(genres_html, "html.parser")
     main_div = soup.find("div", attrs={"style": "width:100%"})
-    links: list[Tag] = main_div.find_all("a")
-    topic_link = list(
-        filter(
-            lambda link_data: link_data[0].lower().strip() == topic.lower().strip(),
-            [(link.text, link.get("href")) for link in links],
-        )
-    )
-    if not topic_link:
+
+    subtopics_links = get_topic_links(
+        main_div, topic
+    )  # [//royallib.com/genre/spravochnaya_literatura/, ...]
+    if not subtopics_links:
         raise ValueError("Такой темы нет")
-    _, topic_url = topic_link[0]  # //royallib.com/genre/spravochnaya_literatura/
-    topic_html = requests.get(f"http:{topic_url}").text
-    soup = BeautifulSoup(topic_html, "html.parser")
-    data_links = [
-        link.get("href") for link in soup.find("div", class_="well").find_all("a")
-    ]
-    # RU: А	Б В Г Д Е Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Э Ю Я итд
-    if page_limit is not None:
-        data_links = data_links[:page_limit]
 
-    pages_data = []
-    for i, data_link in enumerate(data_links):
-        print(f"page {i + 1}/{len(data_links)}")
-        pages_data.extend(parse_page(data_link))
+    result_data = await asyncio.gather(
+        *[parse_subtopic(session, subtopic) for subtopic in subtopics_links]
+    )
+    result_data = [data for sub_list in result_data for data in sub_list]
 
-    json_data = json.dumps([book.to_dict() for book in pages_data], ensure_ascii=False)
+    json_data = json.dumps(
+        [book.to_dict() for book in result_data if book is not None], ensure_ascii=False
+    )
     pathlib.Path(save_path).write_text(json_data, encoding="utf-8")
-    print("final.")
+    await session.close()
+    print(f"final. {time.time() - start}. count - {len(result_data)}")
 
 
-def main():
+async def main():
     topics = {
         1: "Любовные романы",
         2: "Религия и духовность",
@@ -109,8 +140,8 @@ def main():
         % 5
     ) + 1
 
-    parse_by_topic(topics[variant])
+    await parse_by_topic(topics[variant])
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.get_event_loop().run_until_complete(main())
