@@ -29,7 +29,13 @@ for l in author_links:
     drv.get(l)
     dwl = drv.find_elements(by='xpath', value='//a[@title="Скачать книгу"]')
     for a in dwl:
-        books[a.get_attribute('text')] = a.get_attribute('href')
+        book_name = str(a.text)
+        books[book_name] = ''
+        print(book_name)
+        drv.get(a.get_attribute('href'))
+        year = drv.find_element(by='xpath', value='/html/body/div[2]/div/div[2]/div[2]/div/table[1]/tbody/tr/td[2]/table/tbody/tr[5]/td')
+        print(book_name, year.text.split()[-1])
+        books[book_name] = year.text.split()[-1]
 
 print(books)
 input('press Enter')
