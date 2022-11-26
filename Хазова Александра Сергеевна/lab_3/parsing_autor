@@ -48,7 +48,6 @@ for l in alph_links:
     df = pd.DataFrame()
     df['autor'] = val_h
     df['books_name'] = val_books
-    print(df)
     #pd.DataFrame({"books_name": books, "year": year})
     df.to_csv("books.csv", index= False, encoding='utf-8')
 
