@@ -34,11 +34,11 @@ for l in alph_links:
     book_links = [elem.get_attribute('href') for elem in dvl]
     for s in dvl:
         books[s.get_attribute('href')] = s.get_attribute('text')
+    
 
     for a in book_links:
         drv.get(a)
         srch_autor = drv.find_elements(by = 'xpath', value = '//a[starts-with(@href, "//royallib.com/author/")]')
-        #srch_j = drv.find_element(by = 'xpath', value = '//a[starts-with(@title, "Все книги жанра")]')
         #srch_ye = drv.find_element(by = 'xpath', value = '/html/body/div[2]/div/div[2]/div[2]/div/table[1]/tbody/tr/td[2]/table/tbody/tr[5]/td')
         for n in srch_autor:
             h[n.get_attribute('href')] = n.get_attribute('text')
@@ -46,8 +46,8 @@ for l in alph_links:
     val_h = list(h.values())        
     val_books = list(books.values())
     df = pd.DataFrame()
-    df['autor'] = val_h
-    df['books_name'] = val_books
+    df['autor'] = pd.Series(val_h)
+    df['books_name'] = pd.Series(val_books)
     #pd.DataFrame({"books_name": books, "year": year})
     df.to_csv("books.csv", index= False, encoding='utf-8')
 
