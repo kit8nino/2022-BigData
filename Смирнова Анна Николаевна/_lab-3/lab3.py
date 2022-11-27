@@ -35,7 +35,7 @@ try:
             if line.startswith('Год издания:'):
                 year = line[13:]
                 break
-          file_writer.writerow([f'"{book_name}", "{year}"'])
+          file_writer.writerow([f'{book_name},{year}'])
         except:
           continue
 finally:
