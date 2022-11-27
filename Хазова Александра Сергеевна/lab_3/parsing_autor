@@ -1,7 +1,6 @@
 import pandas as pd
 from bs4 import BeautifulSoup 
 import datetime
-import csv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -34,7 +33,6 @@ for l in alph_links:
     book_links = [elem.get_attribute('href') for elem in dvl]
     for s in dvl:
         books[s.get_attribute('href')] = s.get_attribute('text')
-    
 
     for a in book_links:
         drv.get(a)
