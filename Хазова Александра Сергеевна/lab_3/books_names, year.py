@@ -44,7 +44,9 @@ for l in alph_links:
         for tag in soup.find_all("b"):
             if (tag.contents == ['Год издания:']):
                 year = str(tag.parent)
-                ye = int(year[year.find('</b>') + 4:year.find(('</td>'))])
+                year1 = year.replace(" г.", " ")
+                print(year1)
+                ye = int(year1[year1.find('</b>') + 4:year1.find(('</td>'))])
                 h.append(ye)
                 break
         if year == "":
