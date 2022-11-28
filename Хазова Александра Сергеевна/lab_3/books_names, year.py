@@ -26,7 +26,6 @@ srch = drv.find_elements(by = 'xpath', value = '//a[starts-with(@href, "'+str(li
 alph_links = [elem.get_attribute('href') for elem in srch]
 
 books = {}
-
 h = []
   
 for l in alph_links:
@@ -41,18 +40,19 @@ for l in alph_links:
         soup = BeautifulSoup(ye.text, 'html.parser')
         #srch_ye = drv.find_element(by = 'xpath', value = '/html/body/div[2]/div/div[2]/div[2]/div/table[1]/tbody/tr/td[2]/table/tbody/tr[5]/td')
         year = ""
-        for tag in soup.find_all("b"):
-            if (tag.contents == ['Год издания:']):
-                year = str(tag.parent)
-                year1 = year.replace(" г.", " ")
-                print(year1)
-                ye = int(year1[year1.find('</b>') + 4:year1.find(('</td>'))])
-                h.append(ye)
-                break
-        if year == "":
-            h.append('No data')
-    #print(h)
-    
+        try:
+            for tag in soup.find_all("b"):
+                if (tag.contents == ['Год издания:']):
+                    year = str(tag.parent)
+                    year1 = year.replace(" г.", " ")
+                    ye = int(year1[year1.find('</b>') + 4:year1.find(('</td>'))])
+                    h.append(ye)
+                    break
+            if year == "":
+                h.append('No data')
+        except:
+            continue
+
     val_books = list(books.values())
     df = pd.DataFrame()
     
