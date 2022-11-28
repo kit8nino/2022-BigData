@@ -25,10 +25,11 @@ drv.get(link)
 srch = drv.find_elements(by = 'xpath', value = '//a[starts-with(@href, "'+str(link[6:-1])+'-ru-")]')
 alph_links = [elem.get_attribute('href') for elem in srch]
 
-books = {}
-h = []
-  
+df = pd.DataFrame()
+
 for l in alph_links:
+    books = {}
+    h = []
     drv.get(l)
     dvl = drv.find_elements(by = 'xpath', value = '//a[starts-with(@href, "//royallib.com/book/")]')
     book_links = [elem.get_attribute('href') for elem in dvl]
@@ -54,12 +55,13 @@ for l in alph_links:
             continue
 
     val_books = list(books.values())
+
     df = pd.DataFrame()
-    
     df['books_name'] = pd.Series(val_books)
     df['year'] = pd.Series(h)
     #pd.DataFrame({"books_name": books, "year": year})
-    df.to_csv("books.csv", index= False, encoding='utf-8')
+    #print(df)
+    df.to_csv("books.csv", mode='a', index= False, encoding='utf-8')
 
 input('press Enter')
 drv.quit()
