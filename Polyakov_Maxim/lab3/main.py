@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from structs import Employer, Vacancy
+import concurrent.futures
+import csv
 
 
 CHROMEDRIVER_PATH = 'chromedriver107.exe'
@@ -36,6 +38,17 @@ def get_last_page(html: str) -> int | None:
 
 def concat_links(url: str, base_url: str = "https://nn.hh.ru"):
     return base_url + url
+
+
+def get_page_vacancies(link: str, page: int, file_name: str) -> list:
+    source = get_page_source(link, page)
+    vacancies = parse_vacancies(source)
+    with open(file_name, "a", encoding="utf-8", newline="") as file:
+        for vacancy in vacancies:
+            writer = csv.writer(file)
+            writer.writerow(vacancy.get_csv_row())
+    print(f"Page {page} completed with {len(vacancies)} items")
+    return vacancies
 
 
 def parse_vacancies(html: str) -> list:
@@ -88,13 +101,16 @@ def parse_vacancies(html: str) -> list:
 def main():
     link = "https://nn.hh.ru/search/vacancy?area=66&items_on_page=100"
     last_page = get_last_page(get_page_source(link, page=0)) or 1
-    vacancies = []
-    for page in range(last_page):
-        vacancies.extend(parse_vacancies(
-            get_page_source(link, page=page)
-        ))
-    print(len(vacancies))
-    print(vacancies[0])
+    result_file_name = "result.csv"
+    with open(result_file_name, "w", encoding="utf-8", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(("title", "\'link\'",
+                         "\'employer_name\'", "\'employer_link\'", "\'employer_img\'",
+                         "\'respond_link\'", "\'salary\'"))
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        res = [executor.submit(get_page_vacancies, link, page, result_file_name) for page in range(last_page)]
+        concurrent.futures.wait(res)
 
 
 if __name__ == "__main__":
