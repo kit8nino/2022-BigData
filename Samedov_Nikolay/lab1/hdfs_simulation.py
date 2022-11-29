@@ -127,10 +127,13 @@ class NameNode:
                     reverse=True,
                 )
             ).keys()
-        )[:3]
+        )[:self._replications]
 
         for replica_host in replica_hosts:
-            replica_block = self.get_blocks_free(host=replica_host)[0]
+            replica_host_free_blocks = self.get_blocks_free(host=replica_host)
+            if not replica_host_free_blocks:
+                continue
+            replica_block = replica_host_free_blocks[0]
             replica_block.file_name = f"replica_{file_name}_{random.random()}"
             block.replicas.append(replica_block)
             replica_host.write_block(replica_block.title, data)
@@ -197,7 +200,7 @@ class Client:
         offset = 0
 
         for block in current_blocks:
-            block_data = data[offset:self._name_node.block_size + offset]
+            block_data = data[offset : self._name_node.block_size + offset]
             offset += self._name_node.block_size
             block.host.write_block(block.title, block_data)
             self._name_node.replicate_block(block, file_name, block_data)
