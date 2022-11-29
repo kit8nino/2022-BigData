@@ -1,10 +1,8 @@
-from functools import reduce
-
 data_ = []
-for l in open('cacao1.csv').readlines()[1:]:
-    data_.append(l.split(',')[5])
-data1= []
-for i in open('cacao2.csv').readlines()[1:]:
+for j in open('casao.csv').readlines()[1:]:
+    data_.append(j.split(',')[5])
+data1 = []
+for i in open('casao1.csv').readlines()[1:]:
     data1.append(i.split(',')[5])
 res = []
 res = data1 + data_
@@ -18,4 +16,3 @@ while i < len(res):
     d2[res[i]] = data.count(data[i])
     i += data.count(data[i])
 print(d2)
-input()
