@@ -32,8 +32,6 @@ print(d)
 # 5. разделяя списки
 d = {}
 unq = set(data_)
-print(unq)
-print(data[:12])
 for e in unq:
     d[e] = reduce(lambda x, y: x[1] + y[1] if x[0] == e else x[1], data)
 print(d)
