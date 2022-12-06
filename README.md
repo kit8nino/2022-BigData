@@ -28,12 +28,13 @@
 
 - клиент, который по указанному IP стучится к серверу, после чего может вводимую в отдельном потоке строку отправить. А все полученные строки во втором потоке (ожидающего данных от сервера) просто печатает.
 
-Для референса: https://www.binarytides.com/code-chat-application-server-client-sockets-python/
+Для референса: https://www.binarytides.com/code-chat-application-server-client-sockets-python/ ,
 https://habr.com/ru/post/151623/
 
 Рекомендую не копировать код, а писать самостоятельно.
 
 </details>
+--------------
 
 # [1] Симуляция HDFS
 
