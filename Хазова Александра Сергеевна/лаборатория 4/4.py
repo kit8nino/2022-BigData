@@ -6,14 +6,18 @@ import pandas as pd
 data_ = []
 m = []
 
-for l in open(r'Хазова Александра Сергеевна\lab_3\books.csv', 'r', encoding="utf8").readlines()[1:]:
+mapped = open('mapped.csv', 'w', encoding='utf-8')
+
+for l in open(r'..\lab_3\books.csv', 'r', encoding="utf8").readlines()[1:]:
     data_.append(l.split(',')[0])
     for w in data_:
         words = w.split(' ')
         for u in words:
-            m.append(u)
+            #  m.append(u)
+            mapped.write(u + ', 1\n')
 
-res = [] 
+mapped.close()
+res = []
 res = m
 #print(m)
 
