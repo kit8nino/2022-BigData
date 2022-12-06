@@ -26,6 +26,7 @@ for r in open(r'C:\Users\Сергей\Documents\parsing\mapped.csv', 'r', encodi
 
 res = tuple(res)
 
+
 data = list(map(lambda x: (x, 1), res))
 data.sort()
 print(res)
