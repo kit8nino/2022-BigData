@@ -3,10 +3,18 @@ from ast import Lambda
 data = []
 name = '../cop_biblioteca.csv'
 for i in open('../cop_biblioteca.csv', encoding="UTF-8").readlines()[1:]:
-    data.append(i.split(' ')[0])
-data2 = list(map(lambda x: (x, 1), data))
+    data.append((i.split(',')[0]).split(' '))
+data8 = []
+#записываем теперь по отдельным словам
+for i in range(len(data)):
+    for j in range(len(data[i])):
+        data8.append(data[i][j])
+print(data8)
+data2 = list(map(lambda x: (x, 1), data8))
 print('\n print all data: \n ')
+#print(data2)
 #####
+
 data3 = []
 k = 0
 for i in range(len(data2) - 1):  # сортировка выбираем не повторяющиеся
@@ -19,13 +27,17 @@ data4 = [0] * len(data3)
 
 for i in range(len(data2)):  # считаем и сравниваем
     for j in range(len(data5)):
-        if (data2[i][0] == data5[j][0]):
+        if data2[i][0] == data5[j][0]:
             data4[j] += 1
 
-print('\n sum \n')
-print(data4)
-print('\n countries - sum \n')
-data5 = {}
+print('\n STATISTIC \n')
+data6 = {}
 for i in range(len(data3)):
-    data5[data3[i]] = data4[i]
-print(sorted(data5.items(), key=lambda x: x[1], reverse=True))
+    for j in range(len(data3[i])):
+        data6[data3[i]] = data4[i]
+print(sorted(data6.items(), key=lambda x: x[1], reverse=True))
+hehe=0
+#sum all words
+for i in range(len(data4)):
+    hehe+=data4[i]
+print(hehe) 
