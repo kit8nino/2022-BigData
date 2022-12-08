@@ -10,7 +10,7 @@
 
 Работа с блокнотами онлайн, с возможностью подключения удалённых мощностей гугла (GPU, TPU): https://colab.research.google.com/
 
-Таблица, где я буду отмечать сданные работы: 
+Таблица, где я буду отмечать сданные работы: https://docs.google.com/spreadsheets/d/1uwrUXtU0zR_B6aV6mVqvk2tPqOVT76PW5CwtZ9rLoIk/edit?usp=sharing
 
 Сервер в Дискорд, где буду дублировать: https://discord.gg/MzPkCYf4Dh
 Мой контакт: nsmorozov@rf.unn.ru
@@ -47,7 +47,7 @@ https://habr.com/ru/post/151623/
 
 - игровые сообщения и сообщения чата не должны мешать друг другу.
 </details>
---------------
+-------------------------------------
 
 # [1] Симуляция HDFS
 
