@@ -15,7 +15,7 @@ def countries(*_files: str) -> dict:
 
 
 if __name__ == '__main__':
-    files = ("flavors.csv", "flavors.csv")
+    files = ("flavors.csv", "flavors2.csv")
     result = countries(*files)
     print(result)
 
