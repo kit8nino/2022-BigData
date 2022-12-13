@@ -102,17 +102,17 @@ class NameNode():
         """
         Первоначальный подсчет объема памяти
         произвoльное разбиение блоков по хостам (с занесением в оба списка)
-        пометка 'free' у каждого незанятого блока
 
         """
-    pass
+        pass
 
 
-class DataNode():
+class Host():
 
     def write_blocks(self, blocks):
         self.blocks.append(blocks)
-        pass
+        return 'OK'
+
     pass
 
 
@@ -137,8 +137,9 @@ class Client():
         for i in range(len(blocks)):
             blocks_with_data.append(db[i*size_of_block, (i+1)*size_of_block])
         return blocks_with_data
-    pass
 
+    def complete(self, f, nnode):
+        pass
 
 class Connector():
 
@@ -146,3 +147,6 @@ class Connector():
         self.nnode = nnode
         self.clients = clients
         self.hosts = hosts
+
+    def send_msg(self, t_from, t_where, msg):
+        pass
