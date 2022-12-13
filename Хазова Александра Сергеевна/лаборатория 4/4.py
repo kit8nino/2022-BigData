@@ -1,35 +1,33 @@
 from functools import reduce
 import numpy as np
 import pandas as pd
-import itertools
-#import matplotlib.pyplot as plt
+#import itertools
 
 data_ = []
-m = []
 
+m = []
 mapped = open('mapped.csv', 'w', encoding='utf-8')
 
-for l in open(r'C:\Users\Сергей\Documents\parsing\books.csv', 'r', encoding="utf8").readlines()[1:]:
+for l in open(r'..\lab_3\books.csv', 'r', encoding="utf8").readlines()[1:]:
     data_.append(l.split(',')[0])
 #data = itertools.islice(data_, 100) 
 for w in data_:
     words = w.split(' ')
     for u in words:
-        #m.append(u)
+        m.append(u)
         mapped.write(u + '\n')
 
 mapped.close()
 
 res = [] 
-for r in open(r'C:\Users\Сергей\Documents\parsing\mapped.csv', 'r', encoding='utf-8').readlines():
+for r in open('mapped.csv', 'r', encoding='utf-8').readlines():
     res.append(r.split('\n')[0])
 
 res = tuple(res)
 
-
 data = list(map(lambda x: (x, 1), res))
 data.sort()
-print(res)
+#print(res)
 
 i = 0
 d = {}
