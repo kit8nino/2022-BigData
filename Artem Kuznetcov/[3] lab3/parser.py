@@ -96,7 +96,7 @@ async def parse_subtopic(
     return pages_data
 
 
-async def parse_by_topic(topic: str, save_path: str = "books_data.json"):
+async def parse_by_topic(topic: str, save_path: str = "booksData.json"):
     start = time.time()
     url = "http://royallib.com"
     session = aiohttp.ClientSession()
