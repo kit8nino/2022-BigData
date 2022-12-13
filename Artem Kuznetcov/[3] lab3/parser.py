@@ -84,7 +84,7 @@ async def parse_subtopic(
         data_links = [
             link.get("href") for link in soup.find("div", class_="well").find_all("a")
         ]
-        # RU: А	Б В Г Д Е Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Э Ю Я итд
+
         pages_data = await asyncio.gather(
             *[parse_page(session, data_link) for data_link in data_links]
         )
@@ -106,7 +106,7 @@ async def parse_by_topic(topic: str, save_path: str = "booksData.json"):
 
     subtopics_links = get_topic_links(
         main_div, topic
-    )  # [//royallib.com/genre/spravochnaya_literatura/, ...]
+    )
     if not subtopics_links:
         raise ValueError("Такой темы нет")
 
