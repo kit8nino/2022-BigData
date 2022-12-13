@@ -1,4 +1,5 @@
 from ast import Lambda
+import pandas as pd
 
 data = []
 name = '../cop_biblioteca.csv'
@@ -12,8 +13,6 @@ for i in range(len(data)):
 print(data8)
 data2 = list(map(lambda x: (x, 1), data8))
 print('\n print all data: \n ')
-#print(data2)
-#####
 
 data3 = []
 k = 0
@@ -35,9 +34,14 @@ data6 = {}
 for i in range(len(data3)):
     for j in range(len(data3[i])):
         data6[data3[i]] = data4[i]
-print(sorted(data6.items(), key=lambda x: x[1], reverse=True))
-hehe=0
-#sum all words
+data6 = dict(sorted(data6.items(), key=lambda x: x[1], reverse=True))
+print(data6)
+hehe = 0
+# sum all words
 for i in range(len(data4)):
-    hehe+=data4[i]
-print(hehe) 
+    hehe += data4[i]
+print(hehe)
+df = pd.DataFrame()
+df['words'] = pd.Series(data6.keys())
+df['count'] = pd.Series(data6.values())
+df.to_csv("bib_word.csv", index=False, encoding='utf-8')
