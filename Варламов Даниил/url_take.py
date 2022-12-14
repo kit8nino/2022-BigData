@@ -111,7 +111,7 @@ async def get_year(session,link,count,file):
                 if 'Год издания' in i: 
                     n = item[2].strip()
                     _year = n
-        file.write(f'{name},{_year}')
+        file.write(f'{name} , {_year}')
         file.write('\n')
         print(f'обработал {count} страницу')
 

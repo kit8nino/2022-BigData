@@ -18,21 +18,25 @@ import time
 
 # target = table.find_all('td')
 
-with open(r'Варламов Даниил\page.txt','r',encoding='utf-8') as file:
-    soup = BeautifulSoup(file.read(),'lxml')
+# with open(r'Варламов Даниил\page.txt','r',encoding='utf-8') as file:
+#     soup = BeautifulSoup(file.read(),'lxml')
 
 
-target = soup.find_all('td')
+# target = soup.find_all('td')
 
-items = []
+# items = []
 
-for item in target:
-    if 'Год' in item.text:
-        s = item.text
-        items.append(item.text)
+# for item in target:
+#     if 'Год' in item.text:
+#         s = item.text
+#         items.append(item.text)
 
 
-print(items)
+# print(items)
+import re
+s = 'Hello!@#!%!#&&!*!#$#%@*+_{ world!'
+reg = re.compile('[^a-zA-Z ]')
+print(reg.sub('', s))
 # with open(r'Варламов Даниил\page.txt','w',encoding='utf-8',newline='') as file:
 #     for item in target:
 #         i = str(item)
