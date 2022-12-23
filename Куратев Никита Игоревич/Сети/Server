@@ -1,7 +1,7 @@
 import socket
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.bind(('',1234))
+sock.bind(('',12345))
 sock.listen(10)
 print('server is running')
 
@@ -16,7 +16,3 @@ while True:
     conn.sendall(data.upper().encode())
 
 #conn.close()
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
