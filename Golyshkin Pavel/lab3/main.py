@@ -24,9 +24,9 @@ drv = webdriver.Firefox(options=options)
 
 # находит в меню ссылку на жанр
 drv.get(link)
-srch = drv.find_element(by='xpath', value='//ul[@class="menu"]//li[' + str(top_num[variant-1]) + ']//a')  # "https://royallib.com/genre/nauka_obrazovanie/"
+srch = drv.find_element(by='xpath', value='//ul[@class="menu"]//li[' + str(top_num[variant-1]) + ']//a')  
 link = srch.get_attribute('href')
-# ищет ссылку на буквы алфавита в теме варианта
+
 drv.get(link)
 srch = drv.find_elements(by='xpath', value='//a[starts-with(@href, "' + str(link[6:-1]) + '-ru-")]')
 alph_links = [elem.get_attribute('href') for elem in srch]
@@ -35,7 +35,7 @@ books = {}
 h = []
 num_bukva = 0
 for l in alph_links:
-    # берет ссылку книги на одну букву
+  
     drv.get(l)
     dvl = drv.find_elements(by='xpath', value='//a[starts-with(@href, "//royallib.com/book/")]')
     book_links = [elem.get_attribute('href') for elem in dvl]
@@ -67,7 +67,7 @@ for l in alph_links:
 
     df['books_name'] = pd.Series(val_books)
     df['year'] = pd.Series(h)
-    # pd.DataFrame({"books_name": books, "year": year})
+   
     df.to_csv("biblioteca.csv", index=False, encoding='utf-8')
 
 input('press Enter')
