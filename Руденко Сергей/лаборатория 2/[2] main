@@ -1,0 +1,15 @@
+import csv
+from collections import Counter
+
+
+def countryCounter(file):
+
+    with open(file, "r", encoding="utf-8", newline="") as csv_file:
+        out = [row[5] for row in csv.reader(csv_file)]
+        return out
+
+if __name__ == '__main__':
+    _countries = countryCounter('flavors_of_cacao.csv') + countryCounter('flavors_of_cacao_2.csv')
+    _countries.sort()
+    print("Country {0}".format(len(dict(Counter(_countries)))))
+    print(dict(Counter(_countries)))
