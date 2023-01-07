@@ -41,18 +41,18 @@ def concat_links(url: str, base_url: str = "https://nn.hh.ru"):
     return base_url + url
 
 
-def get_page_vacancies(link: str, page: int, file_name: str) -> list:
+def get_page_vacancies(link: str, page: int, file_name: str, area_title: str) -> list:
     source = get_page_source(link, page)
-    vacancies = parse_vacancies(source)
+    vacancies = parse_vacancies(source, area_title)
     with open(file_name, "a", encoding="utf-8", newline="") as file:
         for vacancy in vacancies:
             writer = csv.writer(file)
             writer.writerow(vacancy.get_csv_row())
-    print(f"Page {page} completed with {len(vacancies)} items")
+    print(f"Page {page} for city {area_title} completed with {len(vacancies)} items")
     return vacancies
 
 
-def parse_vacancies(html: str) -> list:
+def parse_vacancies(html: str, area_title: str) -> list:
     soup = BeautifulSoup(html, "html.parser")
     vacancies_container = soup.find("div", attrs={"data-qa": "vacancy-serp__results"})
     items = vacancies_container.find_all("div", class_="serp-item")
@@ -93,43 +93,59 @@ def parse_vacancies(html: str) -> list:
             concat_links(respond_link_item.get("href")) if respond_link_item else None
         )
         employer = Employer(
-            name=employer_name, link=employer_link, img_link=employer_img
+            name=employer_name or "",
+            link=employer_link or "",
+            img_link=employer_img or ""
         )
         vacancy = Vacancy(
-            title=title_text,
-            link=vacancy_link,
-            employer=employer,
-            respond_link=respond_link,
-            salary=salary,
+            area_title=area_title,
+            title=title_text or "",
+            link=vacancy_link or "",
+            employer=employer or "",
+            respond_link=respond_link or "",
+            salary=salary or "",
         )
         vacancies.append(vacancy)
     return vacancies
 
 
-def main():
-    link = "https://nn.hh.ru/search/vacancy?area=66&items_on_page=100"
-    last_page = get_last_page(get_page_source(link, page=0)) or 1
-    result_file_name = "result.csv"
-    with open(result_file_name, "w", encoding="utf-8", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(
-            (
-                "title",
-                "'link'",
-                "'employer_name'",
-                "'employer_link'",
-                "'employer_img'",
-                "'respond_link'",
-                "'salary'",
-            )
-        )
+areas = {
+    "Москва": 1,
+    "Санкт-Петербург": 2,
+    "Екатеринбург": 3,
+    "Владивосток": 22,
+    "Казань": 88,
+    "Нижний Новгород": 66,
+    "Новосибирск": 4
+}
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        res = [
-            executor.submit(get_page_vacancies, link, page, result_file_name)
-            for page in range(last_page)
-        ]
-        concurrent.futures.wait(res)
+
+def main():
+    for area_title, area_key in areas.items():
+        link = f"https://nn.hh.ru/search/vacancy?area={area_key}&items_on_page=100"
+        last_page = get_last_page(get_page_source(link, page=0)) or 1
+        result_file_name = f"result_{area_title}.csv"
+        with open(result_file_name, "w", encoding="utf-8", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(
+                (
+                    "area",
+                    "title",
+                    "link",
+                    "employer_name",
+                    "employer_link",
+                    "employer_img",
+                    "respond_link",
+                    "salary",
+                )
+            )
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            res = [
+                executor.submit(get_page_vacancies, link, page, result_file_name, area_title)
+                for page in range(last_page)
+            ]
+            concurrent.futures.wait(res)
 
 
 if __name__ == "__main__":

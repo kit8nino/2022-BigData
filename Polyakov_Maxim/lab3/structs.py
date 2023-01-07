@@ -10,6 +10,7 @@ class Employer:
 
 @dataclass
 class Vacancy:
+    area_title: str
     title: str
     link: str
     employer: Employer
@@ -18,11 +19,12 @@ class Vacancy:
 
     def get_csv_row(self):
         return (
+            self.area_title,
             self.title,
-            f"'{self.link}'",
-            f"'{self.employer.name}'",
-            f"'{self.employer.link}'",
-            f"'{self.employer.img_link}'",
-            f"'{self.respond_link}'",
-            f"'{self.salary}'",
+            self.link,
+            self.employer.name,
+            self.employer.link,
+            self.employer.img_link,
+            self.respond_link,
+            self.salary,
         )
