@@ -6,7 +6,7 @@ import re
 wookbook = openpyxl.load_workbook("result_ex.xlsx")
 worksheet = wookbook.active
 
-def d1():
+def D1():
     WORDS = ""
     LIST = []
     LIST.clear()
@@ -24,7 +24,7 @@ def d1():
     grap.title('Слова встречающиеся чаще всего')
     grap.show()
 
-def d2():
+def D2():
     new_list = []
     for i in range(0, worksheet.max_row):
         for j in worksheet.iter_cols(2):
@@ -45,5 +45,5 @@ def d2():
     grap.grid(color = 'blue', alpha = 0.3, linestyle = '-', linewidth = 0.5)
     grap.show()
 
-d1()
-d2()
+D1()
+D2()
