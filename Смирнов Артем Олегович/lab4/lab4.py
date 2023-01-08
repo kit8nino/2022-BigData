@@ -39,11 +39,12 @@ def D2():
     labels, values = zip(*X)
     colors = ['red' if (bar == max(data)) else 'pink' for bar in values]
     grap.bar(labels, values, color=colors)
-    grap.title('Количество книг по справочной литературе по годам')
+    grap.title('Кол-во книг по справочной литературе по годам')
     grap.xlabel('Год')
-    grap.ylabel('Количество')
+    grap.ylabel('Кол-во')
     grap.grid(color = 'blue', alpha = 0.3, linestyle = '-', linewidth = 0.5)
     grap.show()
 
+    
 D1()
 D2()
