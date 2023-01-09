@@ -1,0 +1,8 @@
+import socket as sk
+while True
+    sock = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
+    sock.connect((:locallhost: , 12345))
+    datas=input()
+    sock.send(datas.encode())
+    datar=sock.recv(140)
+    print(datar)

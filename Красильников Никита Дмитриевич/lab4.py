@@ -18,6 +18,7 @@ _data = [e for e in _data if e]
 
 res = dict(Counter(_data))
 res1 = {k: v for k, v in sorted(res.items(), key=lambda item: item[1],reverse=True)}
+
 from collections import Counter
 from matplotlib import pyplot as plt
 with open(r'Красильников Никита Дмитриевич\splitted.txt','w',encoding='utf-8') as file:
@@ -49,5 +50,3 @@ plt.xlabel('Слово')
 plt.ylabel('Количество')
 plt.grid(color = 'red', alpha = 0.3, linestyle = '-', linewidth = 0.5)
 plt.show()
-
-
