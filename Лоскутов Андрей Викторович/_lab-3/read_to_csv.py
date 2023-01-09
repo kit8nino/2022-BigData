@@ -1,68 +1,76 @@
-from threading import Thread
-import csv
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from bs4 import BeautifulSoup
+import asyncio
+import aiohttp
+from fake_useragent import UserAgent
+import lxml
 
-result1 = []
-result2 = []
+links = []
 
-def write(links, result):
-    options = Options()
-    options.add_experimental_option('prefs', {
-        'safebrowsing.enabled': True
-    })
-    drv = webdriver.Chrome(options=options)
-    for l in links:
-        drv.get(l)
-        dvl = drv.find_elements(by = 'xpath', value = '//a[starts-with(@href, "//royallib.com/book/")]')
-        book_links = [elem.get_attribute('href') for elem in dvl]
-        for a in book_links:
-            drv.get(a)
-            try:
-                description = drv.find_element(by='xpath', value='/html/body/div[2]/div/div[2]/div[2]/div/table[1]/tbody/tr/td[2]/table').text.split('\n')
-            except:
-                continue
-            finally:
-                name = ''
-                year = ''
-                for line in description:
-                    if line.startswith('Название:'):
-                        name = line[10:]
-                    if line.startswith('Год издания:'):
-                        year = line[13:]
-                        break
-                if year == '':
-                    year = 'none'
-                print(name + ' ' + year)
-                result.append({ 'Название' : name, 'Год издания' : year })
+async def get_year(session,link,count,file):
+    headers = {
+        'user-agent': UserAgent().random
+    }
+    async with session.get(url=link,headers=headers) as response:
+        response_text = await response.text()
+        soup = BeautifulSoup(response_text, 'lxml')
+        try:
+            table = soup.find('table')
+            target = table.find_all('td')
+        except Exception as ex:
+            print(ex)
+            file.write(link)
+            file.write('\n')
+            return
+        items = []
+        for item in target:
+            items.append(item.text)
+        items = [item.strip() for item in items if str(item)]
+        items = [item.split('\n') for item in items]
+        items = [item for item in items if item]
+        items.pop(1)
+        name = ''
+        _year = ''
+        for item in items:
+            for i in item:
+                if 'Название' in i:
+                    n = item[2].strip()
+                    name = n
+                if 'Год издания' in i: 
+                    n = item[2].strip()
+                    _year = n
+        file.write(f'{name} , {_year}')
+        file.write('\n')
+        print(f'обработал {count} страницу')
+
+async def goto_page():
+    tasks = []
+    count = 1
+    with open(r'Лоскутов Андрей Викторович\result.csv','w',encoding='utf-8') as file:
+        async with aiohttp.ClientSession() as session:
+            for link in links:
+                count = count+1
+                task = asyncio.create_task(get_year(session=session,link=link,count=count,file=file))
+                tasks.append(task)
+            await asyncio.gather(*tasks)
+
+def main():
+    print('Вариант 3 тема Справочная литература')
+
+    link = 'https://royallib.com/genre/spravochnaya_literatura/'
+    drv = webdriver.Chrome()
+    drv.get(link)
+    srch = drv.find_elements(by='xpath', value='//a[starts-with(@href, "//royallib.com/genre/spravochnaya_literatura-")]')
+    genre_links = [elem.get_attribute('href') for elem in srch]
+    for i in genre_links:
+        drv.get(i)
+        srch = drv.find_elements(by='xpath', value='//a[starts-with(@href, "//royallib.com/book/")]')
+        name_links = [elem.get_attribute('href') for elem in srch]
+        for l in name_links:
+            links.append(l)
     drv.quit()
-    return result
 
-print('Вариант 3 тема Справочная литература')
+    asyncio.run(goto_page())
 
-link = 'https://royallib.com/genre/spravochnaya_literatura/'
-options = Options()
-options.add_experimental_option('prefs', {
-    'safebrowsing.enabled': True
-})
-drv = webdriver.Chrome(options=options)
-
-drv.get(link)
-srch = drv.find_elements(by='xpath', value='//a[starts-with(@href, "//royallib.com/genre/spravochnaya_literatura-")]')
-links = [elem.get_attribute('href') for elem in srch]
-drv.quit()
-
-t1 = Thread(target=write, args=(links[:len(links)//2], result1))
-t1.start()
-write(links[len(links)//2:], result2)
-t1.join()
-
-with open('result.csv', 'w') as csvfile:
-    writer = csv.DictWriter(csvfile, fieldnames = ['Название', 'Год издания'])
-    writer.writeheader()
-    writer.writerows(result1)
-    writer.writerows(result2)
-print(result1)
-print(result2)
-
-csvfile.close()
+if __name__=='__main__':
+    main()
