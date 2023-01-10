@@ -8,7 +8,7 @@ class Main(Frame):
     def __init__(self, root):
         super(Main, self).__init__(root)
         self.opponent_name = 'Some cool girl'
-        self.set_my_name('Nagibator777')
+        self.set_my_name('Khazova')
         self.startUI()
         self.opponent_choise = IntVar()
 
@@ -51,17 +51,18 @@ class Main(Frame):
         self.lbl2.place(x=5, y=5)
 
         self.lbl3.place(x=145, y=55)
+        for btn in self.game_btns:
+            btn['state'] = tk.DISABLED
 
     def btn_click(self, choise):
         self.choise = choise
-        for btn in self.game_btns:
-            btn['state'] = tk.DISABLED
-        self.lbl3.configure(text=f" Оппонент: {self.get_my_name()}")
+        self.lbl3.configure(text=f" Оппонент: {self.opponent_name}")
+        
         #root.wait_variable(self.opponent_choise)
         # self.check_flag_close_loop(self.is_opponent_chosen())
         self.calc_result(choise, self.opponent_choise)
         for btn in self.game_btns:
-            btn['state'] = tk.NORMAL
+            btn['state'] = tk.DISABLED
         for btn in self.game_btns1:
             btn['state'] = tk.NORMAL
 
@@ -69,7 +70,9 @@ class Main(Frame):
         self.opponent_choise = choise1
         for btn in self.game_btns1:
             btn['state'] = tk.DISABLED
-        self.lbl3.configure(text=f" Оппонент: {self.opponent_name}")
+        for btn in self.game_btns:
+            btn['state'] = tk.NORMAL
+        self.lbl3.configure(text=f" Оппонент: {self.my_name}")
 
     def calc_result(self, choise, opp_choise):
         if choise == opp_choise:
@@ -113,8 +116,9 @@ def socket_start():
     global app
     def client(sock):
         while True:
-            message = app.btn_click1
-            sock.send(message.encode())
+            message = app.opponent_choise
+            print(message)
+            sock.send(message)
 
     def server(conn):
         while True:
@@ -138,8 +142,6 @@ def socket_start():
     socket2_thread = threading.Thread(target=client, args=(sock1, ))
     socket1_thread.start()
     socket2_thread.start()
-    # some code is needed here
-    # use app.set_opponent_choise
 
 if __name__ == '__main__':
     root = Tk()
@@ -155,5 +157,3 @@ if __name__ == '__main__':
     #game_thread = threading.Thread(target=root.mainloop(), args=(root,))
     socket_thread.start()
     root.mainloop()
-    #game_thread.start() 
-    #socket_start() 
