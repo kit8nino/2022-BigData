@@ -53,4 +53,4 @@ try:
 finally:
     fyle.close()
     brouse.quit()
-    input('Ok or not')
+
