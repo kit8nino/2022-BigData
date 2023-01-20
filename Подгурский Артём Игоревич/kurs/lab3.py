@@ -127,6 +127,7 @@ def socket_start():
                 break
             Main.set_opponent_choise(app, data)
             print("Полученно!")
+            
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
