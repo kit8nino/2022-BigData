@@ -133,6 +133,7 @@ def socket_start():
     sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     host = "192.168.2.35"
     port = 12345
+    
 
     sock.bind((host, port))
     sock.listen(1)
