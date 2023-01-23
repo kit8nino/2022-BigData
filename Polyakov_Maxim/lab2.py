@@ -7,6 +7,7 @@ def sposob_1(countries: list[str]) -> dict:
 
 def sposob_2(countries: list[str]) -> dict:
     from collections import Counter
+
     return dict(Counter(countries))
 
 
