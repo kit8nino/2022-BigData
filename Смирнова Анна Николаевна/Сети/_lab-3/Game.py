@@ -176,8 +176,15 @@ if __name__ == '__main__':
     app.pack()
 
     game_thread = threading.Thread(target=root.mainloop)
-    socket_thread = threading.Thread(
-        target=client.socket_start, args=('192.168.1.2', 8081)
+    while True:
+        try:
+            print('Введите ip сервера: ')
+            s = input()
+            socket_thread = threading.Thread(
+        target=client.socket_start, args=(str(s), 1024)
     )
+            break
+        except:
+            print('Ошибка ввода. Повторите попытку')
     socket_thread.start()
     game_thread.run()
