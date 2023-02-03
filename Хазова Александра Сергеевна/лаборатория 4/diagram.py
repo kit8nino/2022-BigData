@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 import statistics
 
@@ -22,9 +23,20 @@ plt.ylabel("Количество повторений")
 plt.tick_params(axis='x', rotation=90)
 
 #plt.plot(data1)
-plt.plot(k , words, 'm')
+plt.plot(k, words, 'm')
 #plt.pie(words)
 #plt.plot(data, data1)
+plt.show()
+
+words05 = list(filter(lambda x:x>=100, df1['1']))
+k05 = df1.loc[lambda df1: df1['1'] >= 100, "0"]
+df2 = pd.DataFrame()
+df2["words"] = [float(i) for i in words05]
+df2["labels"] = k05
+
+plt.grid()
+plt.pie(df2["words"], labels=words05)
+plt.legend(loc = 'center right', bbox_to_anchor=(0, 0.5), labels = df2["labels"])
 plt.show()
 
 data = df["0"]
@@ -113,3 +125,16 @@ print(df5.cov())
 
 print("Корреляция длин названий и года издания: ")
 print(df5.corr())
+
+sns.pairplot(df3)
+plt.show()
+sns.jointplot(df3)
+plt.show()
+sns.heatmap(df3.corr())
+plt.show()
+sns.pairplot(df5)
+plt.show()
+sns.jointplot(df5)
+plt.show()
+sns.heatmap(df5.corr())
+plt.show()
