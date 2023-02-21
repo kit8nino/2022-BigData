@@ -4,6 +4,8 @@
 
 Презентация по курсу (обновляемая): https://docs.google.com/presentation/d/1xZ51nq1IWvccSrLzHo_QyaDQPvMBiWeUhoyPND-ARzo/edit?usp=sharing
 
+Презентация по интеллектуальному анализу: https://docs.google.com/presentation/d/1rMirhHDHlBHSE8TmHPv4mUuaSaGsJ82O2CVv8BqwssI/edit?usp=sharing
+
 Для работы необходим python 3.9 и выше.
 Библиотеки: numpy, pandas, matplotlib, tensorflow
 Редактор любой. Из неплохих: IDLE (родной, идёт вместе с установщиком), Visual Studio Code, notepad++, PyCharm, vim (для любителей сначала страдать, потом наслаждаться)
