@@ -87,6 +87,10 @@ class Server:
 
 
 if __name__ == '__main__':
-    print('Сервер запущен')
-    Server('192.168.1.2', 8081).listen()
-    
+    while True:
+        try:
+            print('Введите ваш ip: ')
+            s = input()
+            Server(str(s), 1024).listen()
+        except:
+            print('Ошибка ввода. Повторите попытку')
