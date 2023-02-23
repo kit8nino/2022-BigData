@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-df = pd.read_csv('survey.csv')
+df = pd.read_csv(r'..\интеллектуальный анализ\survey.csv')
 # https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey
 
 """
