@@ -24,8 +24,8 @@ d0 = pd.Series(map(lambda x: np.NaN if ((x < 15)or(x > 100)) else int(x), df.Age
 #print(d0)
 
 # df.Gender - почистить на 3 категории: М, Ж и все остальное
-d1 = pd.Series(map(lambda x: "М" if ((x == "M")or(x == "Male")or(x=="m")or(x=="male")or(x == "Mal")or(x == "Male ")or(x=="Man")) else x, df.Gender))
-d2 = pd.Series(map(lambda x: "W" if ((x=="female")or(x=="F")or(x=="Woman")or(x=="f")or(x=="woman")or(x=="Female ")) else "other", d1))
+d1 = pd.Series(map(lambda x: "М" if ((x == "M")or(x == "Male")or(x=="m")or(x=="male")or(x == "Mal")or(x == "Male ")or(x=="Man")or(x=="Male-ish")or(x=="maile")or(x == "Cis Male")or(x == "Male (CIS)")or(x == "Make")or(x == "msle")or(x == "cis male")or(x == "Cis Male")or(x == "Malr")or(x == "Mail")) else x, df.Gender))
+d2 = pd.Series(map(lambda x: "W" if ((x=="female")or(x=="F")or(x=="Woman")or(x=="f")or(x=="woman")or(x=="Female ")or(x == "Cis Female")or(x == "Femake")or(x == "cis-female/femme")or(x=="Femail (cis)")or(x=="femail")) else "Other", d1))
 #print(d2)
 
 # df.work_interfere - перевести в значения от 0 до 3
@@ -45,6 +45,7 @@ d22 = pd.Series(map(lambda x: 0 if (x=="Somewhat easy") else 1 if (x=="Don't kno
 
 # изменение столбцов с ответом да, нет, не знаю
 func = lambda x: int(0) if (x=="No") else int(1) if (x=="Yes") else np.NaN
+d23 = pd.Series(map(func, df.self_employed), dtype=pd.Int64Dtype())
 d5 = pd.Series(map(func, df.family_history), dtype=pd.Int64Dtype())
 d6 = pd.Series(map(func, df.treatment), dtype=pd.Int64Dtype())
 d7 = pd.Series(map(func, df.remote_work), dtype=pd.Int64Dtype())
@@ -70,7 +71,7 @@ df1 = pd.DataFrame({ft_names[0] : df.Timestamp,
         ft_names[2] : d2, 
         ft_names[3] : df.Country, 
         ft_names[4] : df.state, 
-        ft_names[5] : df.self_employed, 
+        ft_names[5] : d23, 
         ft_names[6] : d5, 
         ft_names[7] : d6, 
         ft_names[8] : d3, 
@@ -95,4 +96,6 @@ df1 = pd.DataFrame({ft_names[0] : df.Timestamp,
 
 #print(df1)
 
-df1.to_csv("newsurvey.csv", mode='a', index= False, encoding='utf-8')
+df1.to_csv(r'..интеллектуальный анализ\newsurvey.csv', mode='a', index= False, encoding='utf-8')
+
+print(df1.describe())
