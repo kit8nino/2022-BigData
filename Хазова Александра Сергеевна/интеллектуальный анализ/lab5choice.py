@@ -95,10 +95,12 @@ def probability():
     print("Вероятность")
     #treatment - обращались ли за лечением? 
     p_treatment = df.groupby('treatment').size() / len(df)
-    p_treatnent_no = p_treatment.iloc[0] #вероятность что не обращались
+    p_treatment_no = p_treatment.iloc[0] #вероятность что не обращались
     p_treatment_yes = p_treatment.iloc[1] #верояность что обращались
-    p_treatment_NaN = 1-p_treatnent_no-p_treatment_yes #нет ответа
-    print(p_treatnent_no, p_treatment_yes, p_treatment_NaN.strip())
+    p_treatment_NaN = 1-p_treatment_no-p_treatment_yes #нет ответа
+    p1 = (p_treatment_no*(((p_treatment_yes*p_treatment_no)*p_treatment_yes)/p_treatment_yes))/(p_treatment_no) #вероятность обращения
+    #print(p_treatment_no, p_treatment_yes, p_treatment_NaN)
+    print(str(p1)+' - вероятность обращения за лечением')
     #work_interfere - мешают ли психические проблемы в работе?
     p_work = df.groupby('work_interfere').size() / len(df)
     p_work_often = p_work.iloc[0] #часто
@@ -106,14 +108,24 @@ def probability():
     p_work_never = p_work.iloc[2] #никогда
     p_work_sometimes = p_work.iloc[3] #иногда
     p_work_NaN = p_work.iloc[4] #нет ответа
-    print(p_work_often, p_work_sometimes, p_work_rarely, p_work_never, p_work_NaN)
+    p2 = ((p_work_rarely+p_work_never+p_work_sometimes)*(((p_work_rarely*p_work_never*p_work_sometimes*p_work_often)*(p_work_rarely+p_work_never+p_work_sometimes))/p_work_often))/(p_work_often) #часто псих.проблемы мешают в работе
+    p3 = ((p_work_often+p_work_never+p_work_sometimes)*(((p_work_often*p_work_never*p_work_sometimes*p_work_rarely)*(p_work_often+p_work_never+p_work_sometimes))/p_work_rarely))/(p_work_rarely) #редко псих.проблемы мешают в работе
+    p4 = ((p_work_rarely+p_work_often+p_work_sometimes)*(((p_work_rarely*p_work_never*p_work_sometimes*p_work_often)*(p_work_rarely+p_work_never+p_work_sometimes))/p_work_never))/(p_work_never) #никогда псих.проблемы мешают в работе
+    p5 = ((p_work_rarely+p_work_never+p_work_often)*(((p_work_rarely*p_work_never*p_work_sometimes*p_work_often)*(p_work_rarely+p_work_never+p_work_often))/p_work_sometimes))/(p_work_sometimes) #иногда псих.проблемы мешают в работе
+    #print(p_work_often, p_work_sometimes, p_work_rarely, p_work_never, p_work_NaN)
+    print(str(p2)+" - вероятность что ЧАСТО психические проблемы мешают в работе")
+    print(str(p3)+" - вероятность что РЕДКО психические проблемы мешают в работе")
+    print(str(p4)+" - вероятность что НИКОГДА психические проблемы мешают в работе")
+    print(str(p5)+" - вероятность что ИНОГДА психические проблемы мешают в работе")
     #coworkers - хотели бы обсудить проблему псих.здоровья с коллегами?
     p_coworkers = df.groupby('coworkers').size() / len(df)
     p_coworkers_no = p_coworkers.iloc[0] #нет
     p_coworkers_yes = p_coworkers.iloc[1] #да
     p_coworkers_NaN = 1-p_coworkers_no-p_coworkers_yes #нет ответа
-    print(p_coworkers_no, p_coworkers_yes, p_coworkers_NaN)
+    p5 = (p_coworkers_no*(((p_coworkers_yes*p_coworkers_no)*p_coworkers_yes)/p_coworkers_yes))/(p_coworkers_no) #вероятность что хотел обсудить псих.проблемы с коллегами
+    #print(p_coworkers_no, p_coworkers_yes, p_coworkers_NaN)
+    print(str(p5)+" - вероятность того что человек хотел бы обсудить свое психическое здоровье с коллегами")
     
-statistic()
-diagrams()
+#statistic()
+#diagrams()
 probability()
