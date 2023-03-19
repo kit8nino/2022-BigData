@@ -57,9 +57,6 @@ class Main(Frame):
     def btn_click(self, choise):
         self.choise = choise
         self.lbl3.configure(text=f" Оппонент: {self.opponent_name}")
-        
-        #root.wait_variable(self.opponent_choise)
-        # self.check_flag_close_loop(self.is_opponent_chosen())
         self.calc_result(choise, self.opponent_choise)
         for btn in self.game_btns:
             btn['state'] = tk.DISABLED
@@ -130,7 +127,7 @@ def socket_start():
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    host = "192.168.2.35"
+    host = "192.168.38.19"
     port = 12345
 
     sock.bind((host, port))
@@ -150,10 +147,8 @@ if __name__ == '__main__':
     root.resizable(False, False)
     root["bg"] = "#ffef9c"
     app = Main(root)
-    #root.after(6000, app.opponent_choise, 1)
     app.pack()
 
     socket_thread = threading.Thread(target=socket_start, args=())
-    #game_thread = threading.Thread(target=root.mainloop(), args=(root,))
     socket_thread.start()
     root.mainloop()
