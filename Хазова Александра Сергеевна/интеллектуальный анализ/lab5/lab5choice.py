@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import statistics
 
-df = pd.read_csv('newsurvey.csv')
+df = pd.read_csv(r'..\2022-BigData\Хазова Александра Сергеевна\интеллектуальный анализ\lab5\newsurvey.csv')
 
 df = df.drop('Timestamp', axis=1)
 
@@ -72,6 +72,15 @@ def diagrams():
     #plt.savefig("all.png")
     plt.show()
 
+    corr = df.corr()
+    mask = np.zeros_like(corr, dtype=np.bool)
+    mask[np.triu_indices_from(mask)] = True
+    f, ax = plt.subplots(figsize=(15, 15))
+    sns.heatmap(corr, mask=mask, cmap='Purples', vmax=.3, center=0,
+                square=True, cbar_kws={"shrink": .5}, annot = True, fmt=".3f", annot_kws={"size":6})
+    #plt.savefig(r'..\2022-BigData\Хазова Александра Сергеевна\интеллектуальный анализ\lab5\corr.png')
+    plt.show()
+
     plt.grid()
     #print(dfdiagtreat, dfdiagtreat.index)
     for i in dfdiag.columns.tolist():
@@ -87,7 +96,7 @@ def diagrams():
                             size=10, xytext=(0, 5),
                             textcoords='offset points')
         plots.set_title('Количество и вариация элементов в столбцe ' + i)
-        plt.savefig(i+'.png')
+        #plt.savefig(i+'.png')
         plt.show()
         
 
@@ -98,9 +107,14 @@ def probability():
     p_treatment_no = p_treatment.iloc[0] #вероятность что не обращались
     p_treatment_yes = p_treatment.iloc[1] #верояность что обращались
     p_treatment_NaN = 1-p_treatment_no-p_treatment_yes #нет ответа
-    p1 = (p_treatment_no*(((p_treatment_yes*p_treatment_no)*p_treatment_yes)/p_treatment_yes))/(p_treatment_no) #вероятность обращения
+    p1 = (p_treatment_yes*(p_treatment_yes+p_treatment_no/p_treatment_yes*p_treatment_no))/(p_treatment_no+p_treatment_yes+p_treatment_NaN) #вероятность обращения
     #print(p_treatment_no, p_treatment_yes, p_treatment_NaN)
-    print(str(p1)+' - вероятность обращения за лечением')
+    print(str(p1)+' - вероятность обращения за лечением(через вероятности)')
+    p_treatment = df.groupby('treatment').size()
+    p_no = p_treatment.iloc[0] #вероятность что не обращались
+    p_yes = p_treatment.iloc[1] #верояность что обращались
+    p = ((p_no)+((p_yes+p_no)/(p_yes*p_no)))/(len(df)) #yes
+    print(str(p)+' - вероятность что НЕ будут обращаться за лечением(через количества)')
     #work_interfere - мешают ли психические проблемы в работе?
     p_work = df.groupby('work_interfere').size() / len(df)
     p_work_often = p_work.iloc[0] #часто
@@ -122,10 +136,12 @@ def probability():
     p_coworkers_no = p_coworkers.iloc[0] #нет
     p_coworkers_yes = p_coworkers.iloc[1] #да
     p_coworkers_NaN = 1-p_coworkers_no-p_coworkers_yes #нет ответа
-    p5 = (p_coworkers_no*(((p_coworkers_yes*p_coworkers_no)*p_coworkers_yes)/p_coworkers_yes))/(p_coworkers_no) #вероятность что хотел обсудить псих.проблемы с коллегами
+    p5 = (p_coworkers_yes*((p_coworkers_yes+p_coworkers_no)/p_coworkers_yes*p_coworkers_no))/(p_coworkers_no+p_coworkers_yes+p_coworkers_NaN) #вероятность что хотел обсудить псих.проблемы с коллегами
     #print(p_coworkers_no, p_coworkers_yes, p_coworkers_NaN)
     print(str(p5)+" - вероятность того что человек хотел бы обсудить свое психическое здоровье с коллегами")
     
 #statistic()
 #diagrams()
 probability()
+
+#gen_m_bw20_30 = (gen_m+bw20_30)/(gen_m*bw20_30)
