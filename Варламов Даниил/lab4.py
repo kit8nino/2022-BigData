@@ -3,7 +3,7 @@ from collections import Counter
 
 data = []
 
-with open(r'Варламов Даниил\result.csv','r',encoding='utf-8') as file:
+with open(r'result.csv','r',encoding='utf-8') as file:
     data = file.readlines()
 
 for i in range(len(data)):
@@ -19,5 +19,5 @@ _data = [e for e in _data if e]
 res = dict(Counter(_data))
 res1 = {k: v for k, v in sorted(res.items(), key=lambda item: item[1],reverse=True)}
 
-with open(r'Варламов Даниил\splitted.txt','w',encoding='utf-8') as file:
+with open(r'splitted.txt','w',encoding='utf-8') as file:
     file.write(str(res1))
