@@ -1,0 +1,38 @@
+from ast import Lambda
+import pandas as pd
+import matplotlib.pyplot as plt
+import statistics
+data = {}
+data = pd.read_csv('../cop_bib_word.csv', delimiter=',')
+df = pd.read_csv('../cop_bib_word.csv', delimiter=',')
+print(df)
+f_d = []
+f_d1 = []
+
+f_d = list(filter(lambda x: x > 50, data['count']))
+f_d2 = df.loc[lambda df: df['count'] > 50, "words"]
+print(f_d2)
+print("среднее кол-во повторений: ", statistics.mean(list(df['count'])))
+print("медианное кол-во повторений: ", statistics.median(list(df['count'])))
+
+pop_word = str('самое популярное слово: ' + df.iloc[0]['words'])
+
+plt.tick_params(axis='x', rotation=90)
+plt.title("самые популярные слова")
+plt.text(10, 360, pop_word)
+plt.plot(f_d2, f_d)
+plt.show()
+
+d_kor = pd.DataFrame()
+d_kor['c'] = pd.Series(df['words'].str.len())
+d_kor['l'] = df['count']
+d_kor = d_kor.sort_values(by='c',ascending=False)
+pop = d_kor.corr()
+print("корреляция зависимости кол-ва слов от их длины", pop)
+
+plt.tick_params(axis='x', rotation=90)
+plt.ylabel('кол-во слов')
+plt.xlabel('длина слова')
+plt.title("график зависимости кол-ва слов от их длины")
+plt.plot(d_kor['c'], d_kor['l'])
+plt.show()
