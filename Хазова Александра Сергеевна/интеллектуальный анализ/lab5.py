@@ -96,6 +96,6 @@ df1 = pd.DataFrame({ft_names[0] : df.Timestamp,
 
 #print(df1)
 
-df1.to_csv(r'..интеллектуальный анализ\newsurvey.csv', mode='a', index= False, encoding='utf-8')
+df1.to_csv(r'..\интеллектуальный анализ\newsurvey.csv', mode='a', index= False, encoding='utf-8')
 
 print(df1.describe())

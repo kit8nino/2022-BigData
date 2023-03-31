@@ -1,6 +1,12 @@
 # 2022-BigData
 Рабочий репозиторий курсов "Большие данные" и "Интеллектуальный анализ данных"
 
+Библиотеки для работы по Интеллектуальному анализу:
+
+- [Pandas](https://pandas.pydata.org);
+- [Matplotlib](https://matplotlib.org);
+- [TensorFlow](https://www.tensorflow.org);
+- [Keras](https://keras.io);
 
 Презентация по курсу БД (обновляемая): https://docs.google.com/presentation/d/1xZ51nq1IWvccSrLzHo_QyaDQPvMBiWeUhoyPND-ARzo/edit?usp=sharing
 
