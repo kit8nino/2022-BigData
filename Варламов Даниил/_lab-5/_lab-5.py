@@ -1,5 +1,8 @@
+import scipy as sp
+from scipy import stats
 import pandas as pd
-
+import matplotlib.pyplot as plt
+pd.options.mode.chained_assignment = None
 df = pd.read_csv(r'Варламов Даниил/_lab-5/survey.csv')
 # https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey
 """
@@ -10,7 +13,6 @@ df.info()
 df.describe()
 df.nunique()
 """
-
 
 
 
@@ -64,15 +66,16 @@ for i in range (df.shape[0]):
     elif str(df.work_interfere[i]) == 'SOMETIMES':
         df.work_interfere[i] = 1
 
-df = df.loc[(df.work_interfere == 0) | (df.work_interfere == 1) | (df.work_interfere == 2) | (df.work_interfere == 3)]
 
-df = df.reset_index(drop=True)
+
+# df = df.loc[(df.work_interfere == 0) | (df.work_interfere == 1) | (df.work_interfere == 2) | (df.work_interfere == 3)]
+
+# df = df.reset_index(drop=True)
 
 # df.no_employees - перевести в значения от 0 до 5:
         # ['6-25', 'More than 1000', '26-100', '100-500', '1-5', '500-1000']
 
 df.no_employees = df.no_employees.str.upper()
-print(df.no_employees.unique())
 
 for i in range (df.shape[0]):
     if str(df.no_employees[i]) == '1-5':
@@ -89,8 +92,6 @@ for i in range (df.shape[0]):
         df.no_employees[i] = 5
 
 
-
-
 for i in range (df.shape[0]):
     if str(df.leave[i]) == 'Very easy':
         df.leave[i] = 1
@@ -104,8 +105,46 @@ for i in range (df.shape[0]):
         df.leave[i] = 4
     
 
+for i in df.head():
+    for j in range (df.shape[0]):
+        if df[f'{i}'][j] == 'Yes':
+            df[f'{i}'][j] = 1
+        elif df[f'{i}'][j] == 'No':
+            df[f'{i}'][j] = 0
 
 
+dkv = df.copy() # Доля каждого варианта
+for i in dkv.head():
+    if i != 'Timestamp' and i != 'comments':
+        for k,v in dkv[f'{i}'].value_counts(normalize = True).items():
+            for j in range (dkv.shape[0]):
+                if dkv[f'{i}'][j] == k:
+                    dkv[f'{i}'][j] = v
+
+# df.to_csv(r'Варламов Даниил/_lab-5/res.csv')
+
+disp = df.copy() # дисперсия
+
+for i in disp.head():
+    if i != 'Timestamp' and i != 'comments':
+        try:
+            disp[f'{i}'] = disp[f'{i}'].var()
+        except Exception:
+            pass
+
+avg = df['Age'].mean()
+
+median = df.copy()
+median = median.median()
+
+print(median)
+# for i in dkv.head():
+#     if i != 'Timestamp' and i != 'comments':
+#         for k,v in dkv[f'{i}'].value_counts(normalize = True).items():
+#             for j in range (dkv.shape[0]):
+#                 if dkv[f'{i}'][j] == k:
+#                     dkv[f'{i}'][j] = v
+"""
 
 for i in range (df.shape[0]):
     if df.family_history[i] == 'Yes':
@@ -120,9 +159,6 @@ for i in range (df.shape[0]):
     elif df.self_employed[i] == 'No':
         df.self_employed[i] = 0
 
-df = df.loc[(df.self_employed == 1) | (df.self_employed == 0)]
-
-df = df.reset_index(drop=True)
 
 for i in range (df.shape[0]):
     if df.treatment[i] == 'Yes':
@@ -131,32 +167,73 @@ for i in range (df.shape[0]):
         df.treatment[i] = 0
 
 
-
-
 for i in range (df.shape[0]):
     if df.remote_work[i] == 'Yes':
         df.remote_work[i] = 1
     elif df.remote_work[i] == 'No':
         df.remote_work[i] = 0
 
-print(df.tech_company.unique())
-# tech_company                   2
-# benefits                       3
-# care_options                   3
-# wellness_program               3
-# seek_help                      3
-# anonymity                      3
-# leave                          5
-# mental_health_consequence      3
-# phys_health_consequence        3
-# coworkers                      3
-# supervisor                     3
-# mental_health_interview        3
-# phys_health_interview          3
-# mental_vs_physical             3
-# obs_consequence                2
-# comments                     137
-# df.to_csv(r'Варламов Даниил/_lab-5/survey1.csv',sep=',')
+
+for i in range (df.shape[0]):
+    if df.tech_company[i] == 'Yes':
+        df.tech_company[i] = 1
+    elif df.tech_company[i] == 'No':
+        df.tech_company[i] = 0
+
+for i in range (df.shape[0]):
+    if df.benefits[i] == 'Yes':
+        df.benefits[i] = 1
+    elif df.benefits[i] == 'No':
+        df.benefits[i] = 0
+
+
+for i in range (df.shape[0]):
+    if df.care_options[i] == 'Yes':
+        df.care_options[i] = 1
+    elif df.care_options[i] == 'No':
+        df.care_options[i] = 0
+
+
+for i in range (df.shape[0]):
+    if df.wellness_program[i] == 'Yes':
+        df.wellness_program[i] = 1
+    elif df.wellness_program[i] == 'No':
+        df.wellness_program[i] = 0
+
+
+
+for i in range (df.shape[0]):
+    if df.seek_help[i] == 'Yes':
+        df.seek_help[i] = 1
+    elif df.seek_help[i] == 'No':
+        df.seek_help[i] = 0
+
+
+for i in range (df.shape[0]):
+    if df.anonymity[i] == 'Yes':
+        df.anonymity[i] = 1
+    elif df.anonymity[i] == 'No':
+        df.anonymity[i] = 0
+
+
+for i in range (df.shape[0]):
+    if df.mental_health_consequence[i] == 'Yes':
+        df.mental_health_consequence[i] = 1
+    elif df.mental_health_consequence[i] == 'No':
+        df.mental_health_consequence[i] = 0
+
+
+for i in range (df.shape[0]):
+    if df.phys_health_consequence[i] == 'Yes':
+        df.phys_health_consequence[i] = 1
+    elif df.phys_health_consequence[i] == 'No':
+        df.phys_health_consequence[i] = 0
+
+"""
+
+
+
+
 
 # features = df.drop('treatment', 1)
 # labels = df['treatment']
