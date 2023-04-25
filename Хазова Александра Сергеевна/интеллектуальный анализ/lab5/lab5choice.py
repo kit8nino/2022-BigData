@@ -139,6 +139,34 @@ def probability():
     p5 = (p_coworkers_yes*((p_coworkers_yes+p_coworkers_no)/p_coworkers_yes*p_coworkers_no))/(p_coworkers_no+p_coworkers_yes+p_coworkers_NaN) #вероятность что хотел обсудить псих.проблемы с коллегами
     #print(p_coworkers_no, p_coworkers_yes, p_coworkers_NaN)
     print(str(p5)+" - вероятность того что человек хотел бы обсудить свое психическое здоровье с коллегами")
+    #вероятность что нужна помощь
+    
+    #не обращались за лечением, часто проблемы мешают в работе, пол other
+    p_gender = df.groupby('Gender').size()
+    p_other = p_gender.iloc[0]
+    p_often = p_work_often*len(df)
+    p_often_no = p_no+p_often/p_no*p_often
+    p_other_no = p_no+p_other/p_no*p_other
+    p_other_often = p_often+p_other/p_often*p_other
+    p_other_often_no = p_no+p_often+p_other/p_no*p_often*p_other
+    print("Будем считать, что если вероятность >50%, то помощь нужна")
+    p = (p_no + p_often + p_other /(p_other_no * p_often_no * p_other_often * p_other_often_no))/(p_no+p_often+p_other)
+    print(str("%.3f" % (p*100)) + " % - люди, которые отметили что не обращались за лечением, им часто мешают проблемы в работе и пол other")
+    #не обращались за лечением, возраст от 25 до 55, пол other
+    p_age_25_55 = len(df[(df['Age']>25)&(df['Age']<55)])
+    p_age_no = p_no+p_age_25_55/p_no*p_age_25_55
+    p_other_age = p_other+p_age_25_55/p_other*p_age_25_55
+    p_other_age_no = p_no+p_age_25_55+p_other/p_no*p_age_25_55*p_other
+    p = (p_no + p_age_25_55 + p_other /(p_other_no * p_age_no * p_other_age * p_other_age_no))/(p_no+p_age_25_55+p_other)
+    print(str("%.3f" % (p*100)) + " % - те кому от 25 до 55, они НЕ обращались за лечением и пол other")
+    #от 45, обращались за лечением, пол other
+    p_age_30 = len(df[(df['Age']>30)])
+    p_age_yes = p_yes+p_age_30/p_yes*p_age_30
+    p_other_age = p_other+p_age_30/p_other*p_age_30
+    p_other_yes = p_yes+p_other/p_yes*p_other
+    p_other_age_yes = p_yes+p_age_30+p_other/p_yes*p_age_30*p_other
+    p = (p_yes + p_age_30 + p_other /(p_other_yes * p_age_yes * p_other_age * p_other_age_yes))/(p_yes+p_age_30+p_other)
+    print(str("%.3f" % (p*100)) + " % - те кому от 30, они обращались за лечением и пол other")
     
 #statistic()
 #diagrams()

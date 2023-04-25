@@ -33,6 +33,11 @@ def decode_img(img, img_height=img_height, img_width=img_width):
 def get_label(id):
     return df.loc[df['id'] == id, 'genres_list'].iloc[0]
 
+def get_year(id):
+    year = df.loc[df['id'] == id, 'release_date'].iloc[0]
+    year = tf.strings.split(year, "-")[-3]
+    return year
+
 def processing_path(file_path):
     id = get_id(file_path)
     img = tf.io.read_file(file_path)
@@ -51,6 +56,7 @@ for img, id in train_ds.take(3):
     print(f"Name film: {df.loc[df['id'] == id, 'title'].iloc[0]}")
     print(f"image shape: {img.numpy().shape}") #в img хранятся массивы пикселей
     print(f"Labels: {get_label(id)}")
+    print(f"Year: {get_year(id)}")
 
 """""    
 train_ds = tf.keras.utils.image_dataset_from_directory(
