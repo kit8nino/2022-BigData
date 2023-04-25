@@ -21,7 +21,7 @@ def load_imgs(data_dir=data_dir):
 def get_label(file_path, genres=genres):
     parts = tf.strings.split(file_path, os.path.sep)
     img_id = parts.numpy()[-1][:-4]
-    return list(genres[genres['id'] == img_id]['genres_list'])
+    return list(genres[genres['id'] == img_id['genres_list'])
 
 
 def decode_img(img, img_height=img_height, img_width=img_width):
@@ -47,3 +47,11 @@ val_ds = val_ds.map(process_path, num_parallel_calls=tf.data.AUTOTUNE)
 for image, label in train_ds.take(3):
     print(f'image shape: {image.numpy().shape}')
     print(f'labels: {label}')
+
+
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Flatten(input_shape=(img_heigh, img_width)),
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(10)
+])
