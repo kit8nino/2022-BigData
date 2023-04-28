@@ -19,9 +19,9 @@ def load_imgs(data_dir=data_dir):
 
 
 def get_label(file_path, genres=genres):
-    parts = tf.strings.split(file_path, os.path.sep)
-    img_id = parts.numpy()[-1][:-4]
-    return list(genres[genres['id'] == img_id['genres_list'])
+    parts = tf.strings.split(file_path, sep=os.path.sep)
+    img_id = tf.strings.split(parts[-1], '.')[-2]
+    return list(genres[genres['id'] == img_id['genres_list']])
 
 
 def decode_img(img, img_height=img_height, img_width=img_width):
@@ -36,6 +36,8 @@ def process_path(file_path):
     return img, label
 
 
+genres_set = set(genres['genres_list'])
+
 list_ds, image_count = load_imgs()
 val_size = image_count // 5
 train_ds = list_ds.skip(val_size)
@@ -48,10 +50,18 @@ for image, label in train_ds.take(3):
     print(f'image shape: {image.numpy().shape}')
     print(f'labels: {label}')
 
-
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Flatten(input_shape=(img_heigh, img_width)),
+    tf.keras.layers.Flatten(input_shape=(img_height, img_width, 3)),
+    tf.keras.layers.Conv1D(filters=10000, kernel_size=batch_size,
+                           padding='same', activation='sigmoid'),
+    tf.keras.layers.Conv1D(filters=5000, kernel_size=batch_size,
+                           padding='same', activation='sigmoid'),
+    tf.keras.layers.Conv1D(filters=80, kernel_size=batch_size,
+                           padding='same', activation='sigmmoid'),
     tf.keras.layers.Dense(128, activation='relu'),
-    tf.keras.layers.Dropout(0.2),
-    tf.keras.layers.Dense(10)
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dense(128, activation='softmax'),
+    tf.keras.layers.Dense(len(genres_set))
 ])
+model.compile(optimizer='adam', loss='BinaryCrossentropy',
+              metrics=['accuracy'])
