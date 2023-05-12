@@ -46,25 +46,42 @@ val_size = image_count // 5
 train_ds = list_ds.skip(val_size)
 val_ds = list_ds.take(val_size)
 
-train_ds = train_ds.map(process_path, num_parallel_calls=tf.data.AUTOTUNE)
-val_ds = val_ds.map(process_path, num_parallel_calls=tf.data.AUTOTUNE)
-
-for image, label in train_ds.take(3):
-    print(f'image shape: {image.numpy().shape}')
-    print(f'labels: {label}')
+train_ds = tf.keras.utils.image_dataset_from_directory(
+    data_dir,
+    validation_split=0.2,
+    subset="training",
+    seed=123,
+    image_size=(img_height, img_width),
+    batch_size=batch_size)
+val_ds = tf.keras.utils.image_dataset_from_directory(
+    data_dir,
+    validation_split=0.2,
+    subset="validation",
+    seed=123,
+    image_size=(img_height, img_width),
+    batch_size=batch_size)
 
 model = tf.keras.models.Sequential([
     tf.keras.layers.Flatten(input_shape=(img_height, img_width, 3)),
     tf.keras.layers.Conv1D(filters=2128, kernel_size=batch_size,
                            padding='same', activation='sigmoid'),
+    tf.keras.layers.MaxPool1D(pool_size=2, strides=None,
+            padding='valid', data_format='channels_last'),
     tf.keras.layers.Conv1D(filters=768, kernel_size=batch_size,
                            padding='same', activation='sigmoid'),
+    tf.keras.layers.MaxPool1D(pool_size=2, strides=None,
+            padding='valid', data_format='channels_last'),
     tf.keras.layers.Conv1D(filters=64, kernel_size=batch_size,
-                           padding='same', activation='sigmmoid'),
+                           padding='same', activation='sigmoid'),
+    tf.keras.layers.MaxPool1D(pool_size=2, strides=None,
+            padding='valid', data_format='channels_last'),
     tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dense(64, activation='softmax'),
     tf.keras.layers.Dense(len(genres_set))
 ])
+
 model.compile(optimizer='adam', loss='BinaryCrossentropy',
               metrics=['accuracy'])
+
+
