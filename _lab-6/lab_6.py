@@ -41,11 +41,6 @@ def process_path(file_path):
     return img, label
 
 
-list_ds, image_count = load_imgs()
-val_size = image_count // 5
-train_ds = list_ds.skip(val_size)
-val_ds = list_ds.take(val_size)
-
 train_ds = tf.keras.utils.image_dataset_from_directory(
     data_dir,
     validation_split=0.2,
@@ -62,19 +57,20 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
     batch_size=batch_size)
 
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Flatten(input_shape=(img_height, img_width, 3)),
-    tf.keras.layers.Conv1D(filters=2128, kernel_size=batch_size,
+    tf.keras.layers.Conv2D(input_shape=(img_height, img_width, 3),
+                           filters=2128, kernel_size=batch_size,
                            padding='same', activation='sigmoid'),
-    tf.keras.layers.MaxPool1D(pool_size=2, strides=None,
+    tf.keras.layers.MaxPool2D(pool_size=2, strides=None,
             padding='valid', data_format='channels_last'),
-    tf.keras.layers.Conv1D(filters=768, kernel_size=batch_size,
+    tf.keras.layers.Conv2D(filters=768, kernel_size=batch_size,
                            padding='same', activation='sigmoid'),
-    tf.keras.layers.MaxPool1D(pool_size=2, strides=None,
+    tf.keras.layers.MaxPool2D(pool_size=2, strides=None,
             padding='valid', data_format='channels_last'),
-    tf.keras.layers.Conv1D(filters=64, kernel_size=batch_size,
+    tf.keras.layers.Conv2D(filters=64, kernel_size=batch_size,
                            padding='same', activation='sigmoid'),
-    tf.keras.layers.MaxPool1D(pool_size=2, strides=None,
+    tf.keras.layers.MaxPool2D(pool_size=2, strides=None,
             padding='valid', data_format='channels_last'),
+    tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dense(64, activation='softmax'),
@@ -84,4 +80,19 @@ model = tf.keras.models.Sequential([
 model.compile(optimizer='adam', loss='BinaryCrossentropy',
               metrics=['accuracy'])
 
+# Define the checkpoint callback that saves the model's weights at every epoch
+epoch = 0
+PATH = f'checkpoint_{epoch}.ckpt'
 
+cp_callback = tf.keras.callbacks.ModelCheckpoint(
+                             filepath=PATH,
+                             save_weights_only=True, # If False, saves the full model
+                             save_freq='epoch')
+
+model.summary()
+input()
+model.fit(train_ds,
+          validation_data=val_ds,
+          validation_freq=[2, 5, 9],
+          epochs=9,
+          callbacks=[cp_callback])
