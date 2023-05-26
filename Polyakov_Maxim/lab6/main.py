@@ -9,9 +9,16 @@ IMG_WEIGHT = 38
 BATCH_SIZE = 32
 DATA_DIR = pathlib.Path("../../_lab-6/movies_posters")
 TEST_PATH = pathlib.Path("Test")
-SAVE_PATH = pathlib.Path("saved_model.h5")
+SAVE_PATH = pathlib.Path("saved_model_easy.h5")
 
 LOAD_MODEL = True
+
+CLASS_NAMES = [
+    "Action", "Comedy", "Documentary",
+    "Drama", "Family", "Horror",
+    "Mystery", "Romance", "Science Fiction",
+    "Thriller"
+]
 
 
 def normalize_img(image, label):
@@ -60,24 +67,9 @@ def create_model():
 
     _model = keras.Sequential([
         keras.layers.Normalization(input_shape=(IMG_HEIGHT, IMG_WEIGHT, 3)),
-        keras.layers.Conv2D(input_shape=(IMG_HEIGHT, IMG_WEIGHT, 3),
-                            filters=256, kernel_size=(5, 3),
-                            padding='same', activation='sigmoid'),
-        keras.layers.MaxPool2D(pool_size=3, strides=None,
-                               padding='valid', data_format='channels_last'),
-        keras.layers.Conv2D(input_shape=(IMG_HEIGHT, IMG_WEIGHT, 3),
-                            filters=128, kernel_size=(5, 3),
-                            padding='same', activation='sigmoid'),
-        keras.layers.MaxPool2D(pool_size=3, strides=None,
-                               padding='valid', data_format='channels_last'),
-        keras.layers.Conv2D(input_shape=(IMG_HEIGHT, IMG_WEIGHT, 3),
-                            filters=32, kernel_size=(5, 3),
-                            padding='same', activation='sigmoid'),
-        keras.layers.MaxPool2D(pool_size=3, strides=None,
-                               padding='valid', data_format='channels_last'),
-        keras.layers.Flatten(input_shape=(IMG_HEIGHT, IMG_WEIGHT, 1)),
+        keras.layers.Flatten(input_shape=(IMG_HEIGHT, IMG_WEIGHT, 3)),
         keras.layers.Dense(128, activation="relu"),
-        keras.layers.Dense(20, activation="softmax"),
+        keras.layers.Dense(10, activation="softmax"),
     ])
 
     _model.compile(
@@ -90,8 +82,8 @@ def create_model():
     _model.fit(
         ds_train,
         validation_data=ds_validation,
-        epochs=5,
-        batch_size=BATCH_SIZE
+        epochs=100,
+        batch_size=BATCH_SIZE,
     )
     _model.save(str(SAVE_PATH))
     return _model
@@ -99,7 +91,7 @@ def create_model():
 
 def test_model(_model):
     for item_path in os.listdir(str(TEST_PATH)):
-        if item_path.endswith(".jpg"):
+        if item_path.endswith(".jpg") or item_path.endswith(".jpeg"):
             item_path = os.path.join(str(TEST_PATH / item_path))
             img = tf.io.read_file(item_path)
             img = tf.image.decode_jpeg(img)
@@ -113,7 +105,7 @@ def test_model(_model):
             item_name = item_path.split(os.path.sep)[-1]
             print("Score for {}: {}, {}%".format(
                 item_name,
-                np.argmax(score),
+                CLASS_NAMES[np.argmax(score)],
                 np.max(score) * 100)
             )
 
