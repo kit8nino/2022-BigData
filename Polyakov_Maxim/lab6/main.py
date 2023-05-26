@@ -9,9 +9,9 @@ IMG_WEIGHT = 38
 BATCH_SIZE = 32
 DATA_DIR = pathlib.Path("../../_lab-6/movies_posters")
 TEST_PATH = pathlib.Path("Test")
-SAVE_PATH = pathlib.Path("saved_model_old.h5")
+SAVE_PATH = pathlib.Path("saved_model.h5")
 
-LOAD_MODEL = False
+LOAD_MODEL = True
 
 
 def normalize_img(image, label):
@@ -61,12 +61,17 @@ def create_model():
     _model = keras.Sequential([
         keras.layers.Normalization(input_shape=(IMG_HEIGHT, IMG_WEIGHT, 3)),
         keras.layers.Conv2D(input_shape=(IMG_HEIGHT, IMG_WEIGHT, 3),
+                            filters=256, kernel_size=(5, 3),
+                            padding='same', activation='sigmoid'),
+        keras.layers.MaxPool2D(pool_size=3, strides=None,
+                               padding='valid', data_format='channels_last'),
+        keras.layers.Conv2D(input_shape=(IMG_HEIGHT, IMG_WEIGHT, 3),
                             filters=128, kernel_size=(5, 3),
                             padding='same', activation='sigmoid'),
         keras.layers.MaxPool2D(pool_size=3, strides=None,
                                padding='valid', data_format='channels_last'),
         keras.layers.Conv2D(input_shape=(IMG_HEIGHT, IMG_WEIGHT, 3),
-                            filters=64, kernel_size=(5, 3),
+                            filters=32, kernel_size=(5, 3),
                             padding='same', activation='sigmoid'),
         keras.layers.MaxPool2D(pool_size=3, strides=None,
                                padding='valid', data_format='channels_last'),
