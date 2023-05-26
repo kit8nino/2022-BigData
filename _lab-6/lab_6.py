@@ -47,38 +47,41 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
     subset="training",
     seed=123,
     image_size=(img_height, img_width),
-    batch_size=batch_size)
+    batch_size=batch_size,
+    label_mode='categorical')
+
 val_ds = tf.keras.utils.image_dataset_from_directory(
     data_dir,
     validation_split=0.2,
     subset="validation",
     seed=123,
     image_size=(img_height, img_width),
-    batch_size=batch_size)
+    batch_size=batch_size,
+    label_mode='categorical')
 
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Conv2D(input_shape=(img_height, img_width, 3),
-                           filters=2128, kernel_size=batch_size,
-                           padding='same', activation='sigmoid'),
+    tf.keras.layers.Normalization(input_shape=(img_height, img_width, 3),
+                                  mean=510, variance=255),
+    tf.keras.layers.Conv2D(filters=512, kernel_size=batch_size // 2,
+                           padding='same', activation='relu'),
     tf.keras.layers.MaxPool2D(pool_size=3, strides=None,
-            padding='valid', data_format='channels_last'),
-    tf.keras.layers.Conv2D(filters=512, kernel_size=batch_size,
-                           padding='same', activation='sigmoid'),
+                              padding='valid',
+                              data_format='channels_last'),
+    tf.keras.layers.Conv2D(filters=256, kernel_size=batch_size // 4,
+                           padding='same', activation='relu'),
     tf.keras.layers.MaxPool2D(pool_size=2, strides=None,
-            padding='valid', data_format='channels_last'),
-    tf.keras.layers.Conv2D(filters=64, kernel_size=batch_size,
-                           padding='same', activation='sigmoid'),
-    tf.keras.layers.MaxPool2D(pool_size=2, strides=None,
-            padding='valid', data_format='channels_last'),
+                              padding='valid',
+                              data_format='channels_last'),
     tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(64, activation='relu'),
-    tf.keras.layers.Dense(64, activation='relu'),
-    tf.keras.layers.Dense(64, activation='softmax'),
-    tf.keras.layers.Dense(len(genres_set))
+    tf.keras.layers.Dropout(.5),
+    tf.keras.layers.Dense(64, activation='linear'),
+    tf.keras.layers.Dense(32, activation='softmax'),
+    tf.keras.layers.Dense(20, activation='relu')
 ])
 
-model.compile(optimizer='adam', loss='BinaryCrossentropy',
-              metrics=['accuracy'])
+model.compile(optimizer='adam', loss='categorical_crossentropy',
+              metrics=[tf.keras.metrics.CategoricalAccuracy()],
+              jit_compile=True)
 
 # Define the checkpoint callback that saves the model's weights at every epoch
 epoch = 0
@@ -86,11 +89,11 @@ PATH = f'checkpoint_{epoch}.ckpt'
 
 cp_callback = tf.keras.callbacks.ModelCheckpoint(
                              filepath=PATH,
-                             save_weights_only=True, # If False, saves the full model
+                             save_weights_only=True, # If False, full model
                              save_freq='epoch')
 
 model.summary()
-input()
+input("Press enter to start")
 model.fit(train_ds,
           validation_data=val_ds,
           validation_freq=[2, 5, 9],
