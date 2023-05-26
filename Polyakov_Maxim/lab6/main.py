@@ -9,7 +9,9 @@ IMG_WEIGHT = 38
 BATCH_SIZE = 32
 DATA_DIR = pathlib.Path("../../_lab-6/movies_posters")
 TEST_PATH = pathlib.Path("Test")
-SAVE_PATH = pathlib.Path("saved_model.h5")
+SAVE_PATH = pathlib.Path("saved_model_old.h5")
+
+LOAD_MODEL = False
 
 
 def normalize_img(image, label):
@@ -22,7 +24,7 @@ def load_model():
 
 
 def create_model():
-    if SAVE_PATH.is_file():
+    if LOAD_MODEL and SAVE_PATH.is_file():
         return load_model()
 
     ds_train = keras.preprocessing.image_dataset_from_directory(
@@ -34,7 +36,7 @@ def create_model():
         image_size=(IMG_HEIGHT, IMG_WEIGHT),
         shuffle=True,
         seed=123,
-        validation_split=0.1,
+        validation_split=0.2,
         subset="training"
     )
 
@@ -47,7 +49,7 @@ def create_model():
         image_size=(IMG_HEIGHT, IMG_WEIGHT),
         shuffle=True,
         seed=123,
-        validation_split=0.1,
+        validation_split=0.2,
         subset="validation"
     )
 
