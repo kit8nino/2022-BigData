@@ -2,6 +2,7 @@ import scipy as sp
 from scipy import stats
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 pd.options.mode.chained_assignment = None
 df = pd.read_csv(r'Варламов Даниил/_lab-5/survey.csv')
 # https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey
@@ -137,7 +138,36 @@ avg = df['Age'].mean()
 median = df.copy()
 median = median.median()
 
-print(median)
+
+
+
+treatment_mean = df['treatment'].mean()
+treatment_above_mean = df[df['treatment'] > treatment_mean]
+treatment_ratio = len(treatment_above_mean) / len(df)
+
+
+
+
+
+
+fig, ax = plt.subplots()
+sns.countplot(x="treatment", hue="Gender", data=df, ax=ax)
+ax.set_title("Treatment by Gender")
+plt.show()
+
+fig, ax = plt.subplots()
+sns.countplot(x="treatment", hue="leave", data=df, ax=ax)
+ax.set_title("Treatment by Leave")
+plt.show()
+
+fig, ax = plt.subplots()
+sns.countplot(x="treatment", hue="no_employees", data=df, ax=ax)
+ax.set_title("Treatment by No. of Employees")
+plt.show()
+
+
+
+
 # for i in dkv.head():
 #     if i != 'Timestamp' and i != 'comments':
 #         for k,v in dkv[f'{i}'].value_counts(normalize = True).items():
