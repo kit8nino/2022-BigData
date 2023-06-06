@@ -4,11 +4,11 @@ import pathlib
 import tensorflow as tf
 import os
 
-data_dir = pathlib.Path("d:/work/2022-bigdata/_lab-6/movies_posters")
+data_dir = pathlib.Path("d:/work/2022-bigdata/lab-6/movies_posters")
 img_height = 281
 img_width = 190
 batch_size = 32
-genres = pd.read_csv('d:/work/2022-bigdata/_lab-6/movies_dataset.csv')
+genres = pd.read_csv('d:/work/2022-bigdata/lab-6/movies_dataset.csv')
 
 
 def load_imgs(data_dir=data_dir):
