@@ -14,17 +14,17 @@ folderPlots = 'plots\\'
 dfName = 'newsurvey.csv'
 
 def WhatToDo():
-    return input('0 - переписать newsurvey\n1 - провести статистический анализ данных\n2 - выделить ключевые признаки наличия заболевания\n3 - построить графики для ключевых признаков\n4 - проверка гипотезы с помощью теоремы Байеса\n  Ваш выбор: ')
+    return input('1 - переписать файл\n2 - статистический анализ данных\n3 - ключевые признаки наличия заболевания\n4 - графики для ключевых признаков\n5 - теорема Байеса\n  Ваш покемон: ')
 
 def RewriteCsv():
     df = pd.read_csv(folder+'srv.csv')
-    nlp = spacy.load('en_core_web_sm') # для оценки схожести слов (в Gender)
+    nlp = spacy.load('en_core_web_sm') 
 
-    def ValueToInt(x, dict, name): # оцифровывание по словарю
+    def ValueToInt(x, dict, name): ю
         if x in dict:
             df.loc[df[name] == x, name] = dict[x]
             
-    def ValueToIntYesNo(x, name): # оцифровывания по да/нет
+    def ValueToIntYesNo(x, name): 
         if x != 0 and x!=1:
             df.loc[df[name] == x, name] = 0 if (x=='No') else (1 if (x=='Yes') else np.NaN)
 
@@ -105,7 +105,6 @@ def Statistic():
 
     for column in ft_names:
         if column == 'Country' or column == 'state':
-            ##print(str(df[column].value_counts(dropna=False, normalize=True)))
             continue
         avg =  ', avg: '+ str(df['Age'].sum()/df['Age'].value_counts(dropna=False).sum()) if column == 'Age' else ''
 
@@ -143,10 +142,10 @@ def Correlation(task):
             plt.savefig(folder+folderPlots+'3 ' + i+'.png')
             plt.show()
 
-    if (task == 2):
+    if (task == 3):
         CorrPlt()
         TreatmentPlt()
-    elif (task == 3):
+    elif (task == 4):
         PlotGraphs()
 
 def Probability():
@@ -190,15 +189,15 @@ def Probability():
 
 
 whatToDo = WhatToDo()
-if whatToDo == '0':
+if whatToDo == '1':
     RewriteCsv()
-elif whatToDo == '1':
-    Statistic()
 elif whatToDo == '2':
-    Correlation(2)
+    Statistic()
 elif whatToDo == '3':
     Correlation(3)
 elif whatToDo == '4':
+    Correlation(4)
+elif whatToDo == '5':
     Probability()
 
     
