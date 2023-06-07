@@ -62,21 +62,26 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
 model = tf.keras.models.Sequential([
     tf.keras.layers.Normalization(input_shape=(img_height, img_width, 3),
                                   mean=510, variance=255),
-    tf.keras.layers.Conv2D(filters=512, kernel_size=batch_size // 2,
-                           padding='same', activation='relu'),
-    tf.keras.layers.MaxPool2D(pool_size=3, strides=None,
-                              padding='valid',
-                              data_format='channels_last'),
-    tf.keras.layers.Conv2D(filters=256, kernel_size=batch_size // 4,
-                           padding='same', activation='relu'),
+    tf.keras.layers.Conv2D(filters=512, kernel_size=(4, 4),
+                           padding='same', activation='relu',
+                           strides=(2, 2)),
     tf.keras.layers.MaxPool2D(pool_size=2, strides=None,
                               padding='valid',
                               data_format='channels_last'),
+    tf.keras.layers.Conv2D(filters=256, kernel_size=(4, 4),
+                           padding='same', activation='relu',
+                           strides=(2, 2)),
+    tf.keras.layers.MaxPool2D(pool_size=2, strides=None,
+                              padding='valid',
+                              data_format='channels_last'),
+    tf.keras.layers.Conv2D(filters=256, kernel_size=(3, 3),
+                           padding='same', activation='relu',
+                           strides=(1, 1)),
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dropout(.5),
-    tf.keras.layers.Dense(64, activation='linear'),
-    tf.keras.layers.Dense(32, activation='softmax'),
-    tf.keras.layers.Dense(20, activation='relu')
+    tf.keras.layers.Dense(64, activation='sigmoid'),
+    tf.keras.layers.Dense(32, activation='sigmoid'),
+    tf.keras.layers.Dense(10, activation='softmax')
 ])
 
 model.compile(optimizer='adam', loss='categorical_crossentropy',
@@ -94,8 +99,12 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(
 
 model.summary()
 input("Press enter to start")
-model.fit(train_ds,
-          validation_data=val_ds,
-          validation_freq=[2, 5, 9],
-          epochs=9,
-          callbacks=[cp_callback])
+hist = model.fit(train_ds,
+                 validation_data=val_ds,
+                 validation_freq=[2, 5, 9],
+                 epochs=3,
+                 callbacks=[cp_callback])
+
+metrics_df = pd.DataFrame(hist.history)
+metrics_df[["loss","val_loss"]].plot();
+metrics_df[["accuracy","val_accuracy"]].plot();
