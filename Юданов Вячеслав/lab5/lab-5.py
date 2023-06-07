@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 pd.options.mode.chained_assignment = None
-df = pd.read_csv(r'Варламов Даниил/_lab-5/survey.csv')
+df = pd.read_csv(r'Юданов Вячеслав/_lab-5/survey.csv')
 # https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey
 """
 df.head()
